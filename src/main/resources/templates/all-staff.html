@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <title>Таблица сотрудников</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+
+<body>
+
+<th:block th:include="/_title"></th:block>
+
+<br><br><br>
+
+<a href="addStaff">Добавить сотрудников</a>
+<br/><br/>
+<div>
+    <table border="1" width="100%">
+        <caption>Таблица сотрудников</caption>
+        <tr>
+            <th>id</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Отчество</th>
+            <th>Телефон</th>
+            <th>Почта</th>
+            <th>Отдел</th>
+            <th>Активность</th>
+
+        </tr>
+        <tr th:each="staff : ${staff}">
+            <td th:utext="${staff.id}">...</td>
+            <td th:utext="${staff.firstname}">...</td>
+            <td th:utext="${staff.lastname}">...</td>
+            <td th:utext="${staff.middlename}">...</td>
+            <td th:utext="${staff.phone}">...</td>
+            <td th:utext="${staff.mail}">...</td>
+            <td th:utext="${staff.department}">...</td>
+            <td th:utext="${staff.enabled}">...</td>
+            <td>
+                <form th:action="@{/api/staff/update/}" method="get">
+                    <input type="hidden" th:name="staffId" th:value="${staff.id}">
+                    <input type="submit" value="Изменить"/>
+                </form>
+
+                <form th:action="@{/api/staff/delete/}" method="get">
+                    <input type="hidden" th:name="staffId" th:value="${staff.id}"/>
+                    <input type="submit" value="Блокировать"/>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

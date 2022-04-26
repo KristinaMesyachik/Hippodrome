@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<th:block th:include="/_title"></th:block>
+
+<br><br><br>
+<table border="1" width="100%">
+    <caption>Моя корзина</caption>
+    <tr>
+        <th>id</th>
+        <th>Название</th>
+        <th>Описание</th>
+        <th>Стоимость</th>
+        <th>Место</th>
+        <th>Время</th>
+
+        <div th:if="basket">
+            <th>Действие</th>
+
+        </div>
+    </tr>
+    <tr th:each="service : ${services}">
+        <td th:utext="${service.id}">...</td>
+        <td th:utext="${service.title}">...</td>
+        <td th:utext="${service.description}">...</td>
+        <td th:utext="${service.cost}">...</td>
+        <td th:utext="${service.place}">...</td>
+        <td th:utext="${service.time}">...</td>
+        <td>
+            <form th:action="@{/api/services/deleteFromBasket}" method="get">
+                <input type="hidden" th:name="serviceId" th:value="${service.id}"/>
+                <input type="submit" value="Удалить"/>
+            </form>
+        </td>
+    </tr>
+</table>
+</div>
+<div>
+    <div th:if="${basket}">
+        <form th:action="@{/api/orders/addOrder}" method="get">
+            <input type="submit" value="Сформировать заказ"/>
+        </form>
+    </div>
+</div>
+</body>
+</html>

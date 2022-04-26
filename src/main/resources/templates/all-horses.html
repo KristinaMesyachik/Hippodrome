@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <title>Таблица лошадей</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+
+<body>
+
+<th:block th:include="/_title"></th:block>
+
+<br><br><br>
+
+<a href="addHorse">Добавить лошадь</a>
+<br/><br/>
+<div>
+    <table border="1" width="100%">
+        <caption>Таблица лошадей</caption>
+        <tr>
+            <th>Кличка</th>
+            <th>Порода</th>
+            <th>Гендер</th>
+            <th>Возраст</th>
+            <th>Рост</th>
+            <th>Вес</th>
+            <th>Рейтинг</th>
+            <th>Активность</th>
+
+
+        </tr>
+        <tr th:each="horse : ${horses}">
+            <td th:utext="${horse.nickname}">...</td>
+            <td th:utext="${horse.breed}">...</td>
+            <td th:utext="${horse.gender}">...</td>
+            <td th:utext="${horse.age}">...</td>
+            <td th:utext="${horse.height}">...</td>
+            <td th:utext="${horse.weight}">...</td>
+            <td th:utext="${horse.rating}">...</td>
+            <td th:utext="${horse.enabled}">...</td>
+
+            <td>
+                <form th:action="@{/api/horses/update/}" method="get">
+                    <input type="hidden" th:name="horseId" th:value="${horse.id}">
+                    <input type="submit" value="Изменить"/>
+                </form>
+
+                <form th:action="@{/api/horses/delete/}" method="get">
+                    <input type="hidden" th:name="horseId" th:value="${horse.id}"/>
+                    <input type="submit" value="Блокировать"/>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

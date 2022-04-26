@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <title>Таблица лошадей</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+
+<body>
+
+<th:block th:include="/_title"></th:block>
+
+<br><br><br>
+
+<div>
+    <table border="1" width="100%">
+        <caption>Таблица заказов</caption>
+        <tr>
+            <th>id</th>
+            <th>Статус</th>
+            <th>Время</th>
+            <th>Сумма</th>
+            <th>Пользователь</th>
+
+        </tr>
+        <tr th:each="order : ${orders}">
+            <td th:utext="${order.id}">...</td>
+            <td th:utext="${order.status}">...</td>
+            <td th:utext="${order.time}">...</td>
+            <td th:utext="${order.amount}">...</td>
+            <td th:utext="${order.userId}">...</td>
+
+        </tr>
+    </table>
+</div>
+</body>
+</html>

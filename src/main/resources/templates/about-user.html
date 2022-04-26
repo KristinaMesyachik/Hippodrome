@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<th:block th:include="/_title"></th:block>
+
+<br><br><br>
+<div>
+    <table border="1" width="100%">
+        <caption>Информация о пользователе</caption>
+        <tr>
+            <th>Id</th>
+            <th>Логин</th>
+            <th>Роль</th>
+            <th>Баланс</th>
+            <th>Статус</th>
+
+        </tr>
+        <tbody>
+        <tr th:with="user = ${user}">
+            <td th:utext="${user.id}">...</td>
+            <td th:utext="${user.login}">...</td>
+            <td th:utext="${user.role}">...</td>
+            <td th:utext="${user.balance}">...</td>
+            <td th:utext="${user.enabled}">...</td>
+        </tr>
+        <tbody>
+
+    </table>
+
+    <br><br>
+
+    <table border="1" width="100%">
+        <caption>Дополнительная информация о пользователе</caption>
+        <tr>
+            <th>Id</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Отчество</th>
+            <th>Телефон</th>
+            <th>Почта</th>
+
+        </tr>
+        <tbody>
+        <tr th:with="info = ${info}">
+            <td th:utext="${info.id}">...</td>
+            <td th:utext="${info.lastname}">...</td>
+            <td th:utext="${info.firstname}">...</td>
+            <td th:utext="${info.middlename}">...</td>
+            <td th:utext="${info.phone}">...</td>
+            <td th:utext="${info.mail}">...</td>
+        </tr>
+        <tbody>
+    </table>
+</div>
+</body>
+</html>

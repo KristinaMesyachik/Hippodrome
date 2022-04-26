@@ -14,6 +14,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "staff")
 public class Staff implements Serializable {
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,17 +39,22 @@ public class Staff implements Serializable {
     @Column(name = "department")
     private Department department;
 
+    @Column(name = "enabled")
+    private int enabled;
+
     public Staff(String firstname,
                  String lastname,
                  String middlename,
                  String phone,
                  String mail,
-                 Department department) {
+                 Department department,
+                 int enabled) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.middlename = middlename;
         this.phone = phone;
         this.mail = mail;
         this.department = department;
+        this.enabled = enabled;
     }
 }

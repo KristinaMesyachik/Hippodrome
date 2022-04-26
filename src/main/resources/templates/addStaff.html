@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить сотрудника</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<th:block th:include="/_title"></th:block>
+
+<br><br>
+
+<h1>Добавление сотрудника:</h1>
+
+<form th:action="@{/api/staff/save}" th:object="${staff}" method="POST">
+    <input type="hidden" th:field="*{id}"/>
+    <br/>
+
+    Имя :
+    <input type="text" th:field="*{firstname}"/>
+    <br/>
+
+    Фамилия :
+    <input type="text" th:field="*{lastname}"/>
+    <br/>
+
+    Отчество :
+    <input type="text" th:field="*{middlename}"/>
+    <br/>
+
+    Телефон :
+    <input type="text" th:field="*{phone}"/>
+    <br/>
+
+    Почта :
+    <input type="text" th:field="*{mail}"/>
+    <br/>
+
+    Отдел :
+    <select name="department" th:field="*{department}">
+        <option th:each="department : ${T(by.university.hippo.entity.enums.Department).values()}"
+                th:value="${department}" th:text="${department.value}">
+        </option>
+    </select>
+
+    <input type="submit" value="Добавить"/>
+
+</form>
+
+<br/>
+</body>
+</html>

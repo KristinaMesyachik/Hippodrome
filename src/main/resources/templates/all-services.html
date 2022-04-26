@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <title>Таблица лошадей</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+
+<body>
+
+<th:block th:include="/_title"></th:block>
+
+<br><br><br>
+
+<a href="addService">Добавить услугу</a>
+<br/><br/>
+<div>
+    <table border="1" width="100%">
+        <caption>Таблица услуг</caption>
+        <tr>
+            <th>id</th>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Стоимость</th>
+            <th>Место</th>
+            <th>Время</th>
+        </tr>
+        <tr th:each="service : ${services}">
+            <td th:utext="${service.id}">...</td>
+            <td th:utext="${service.title}">...</td>
+            <td th:utext="${service.description}">...</td>
+            <td th:utext="${service.cost}">...</td>
+            <td th:utext="${service.place}">...</td>
+            <td th:utext="${service.time}">...</td>
+
+            <td>
+                <form th:action="@{/api/services/addBasket/}" method="get">
+                    <input type="hidden" th:name="serviceId" th:value="${service.id}"/>
+<!--                    <input type="hidden" th:name="strId" th:value="${strId}"/>-->
+                    <input type="submit" value="Добавить"/>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

@@ -14,8 +14,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Horse implements Serializable {
+
     @Id
-    @Column(name ="id")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -41,13 +42,18 @@ public class Horse implements Serializable {
     @Column(name = "rating")
     private double rating;
 
+    @Column(name = "enabled")
+    private int enabled;
+
     public Horse(String nickname,
                  String breed,
                  Gender gender,
                  int age,
                  double height,
                  double weight,
-                 double rating) {
+                 double rating,
+                 int enabled
+    ) {
         this.nickname = nickname;
         this.breed = breed;
         this.gender = gender;
@@ -55,5 +61,6 @@ public class Horse implements Serializable {
         this.height = height;
         this.weight = weight;
         this.rating = rating;
+        this.enabled = enabled;
     }
 }

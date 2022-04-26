@@ -1,14 +1,18 @@
 package by.university.hippo.service.impl;
 
 import by.university.hippo.entity.Service;
+import by.university.hippo.exception.NoSuchHippoException;
 import by.university.hippo.repository.IServiceRepository;
 import by.university.hippo.service.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @org.springframework.stereotype.Service
-public class ServiceService implements IService<Service,Long> {
+public class ServiceService implements IService<Service, Long> {
 
     @Autowired
     private IServiceRepository serviceRepository;
@@ -20,7 +24,11 @@ public class ServiceService implements IService<Service,Long> {
 
     @Override
     public Service findById(Long id) {
-        return null;
+        Optional<Service> serviceOptional = serviceRepository.findById(id);
+        if (serviceOptional.isEmpty()) {
+            throw new NoSuchHippoException("There is no service with ID = " + id + "in database");
+        }
+        return serviceOptional.get();
     }
 
     @Override
@@ -28,8 +36,22 @@ public class ServiceService implements IService<Service,Long> {
 
     }
 
-    @Override
+//    @Override
     public void save(Service entity) {
+        serviceRepository.save(entity);
+    }
 
+    public List<Long> deleteFromBasket(Long id, List<Long> basket) {
+        basket.remove(id);
+        return basket;
+    }
+
+    @Transactional
+    public List<Service> viewBasket(List<Long> basket) {
+        List<Service> services = new ArrayList<>();
+        for (Long i : basket) {
+            services.add(findById(i));
+        }
+        return services;
     }
 }

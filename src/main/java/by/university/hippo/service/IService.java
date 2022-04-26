@@ -9,5 +9,4 @@ public interface IService<D, K>{
 
     void delete(K id);
 
-    void save(D entity);
 }

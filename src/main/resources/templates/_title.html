@@ -1,0 +1,35 @@
+<div xmlns:th="http://www.thymeleaf.org"
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+     style="border: 1px solid #ccc;padding:5px;margin-bottom:20px;">
+    <table border="1" width="100%">
+        <tr>
+            <th><a href="/"><h3>Главная</h3></a></th>
+            <th><a href="/api/services/"><h3>Меню услуг</h3></a></th>
+            <th><a href="/api/staff/"><h3>Сотрудники</h3></a></th>
+            <th><a href="/api/orders/"><h3>Заказы</h3></a>
+            <th><a href="/api/users/"><h3>Пользователи</h3></a>
+            <th><a href="/api/horses/"><h3>Лошади</h3></a></th>
+            <th><a href="/api/cards/"><h3>Карты</h3></a></th>
+
+            <div sec:authorize="isAnonymous()">
+                <a href="/api/users/addUser/"><h3>Регистрация</h3></a>
+                <a href="/login"><h4>Войти</h4></a>
+            </div>
+
+            <div sec:authorize="isAuthenticated()">
+                <form th:action="@{/api/services/before-logout}" method="get">
+                    <input type="submit" value="Выйти"/>
+                </form>
+                <p align="right">Добро пожаловать, <span sec:authentication="name"></span></p>
+            </div>
+
+            <th><a href="/api/services/basket/">
+                <h3>Корзина(<span th:text="${session.basket}"></span>)</h3></a></th>
+            <th>
+                <h3>Баланс: <span th:text="${session.balance}"></span></h3></a></th>
+            </th>
+
+        </tr>
+    </table>
+
+</div>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить лошадь</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<th:block th:include="/_title"></th:block>
+
+<br><br>
+
+<h1>Добавление лошади:</h1>
+
+<form th:action="@{/api/horses/save}" th:object="${horse}" method="POST">
+    <input type="hidden" th:field="*{id}"/>
+    <br/>
+    Кличка :
+    <input type="text" th:field="*{nickname}"/>
+    <br/>
+
+    Порода :
+    <input type="text" th:field="*{breed}"/>
+    <br/>
+
+    Пол :
+    <select name="gender" th:field="*{gender}">
+        <option th:each="gender : ${T(by.university.hippo.entity.enums.Gender).values()}"
+                th:value="${gender}" th:text="${gender.value}">
+        </option>
+    </select>
+
+    Возраст :
+    <input type="text" th:field="*{age}"/>
+    <br/>
+
+    Рост :
+    <input type="text" th:field="*{height}"/>
+    <br/>
+
+    Вес :
+    <input type="text" th:field="*{weight}"/>
+    <br/>
+
+    Рейтинг :
+    <input type="text" th:field="*{rating}"/>
+    <br/>
+
+    <input type="submit" value="Добавить"/>
+
+</form>
+
+<br/>
+</body>
+</html>

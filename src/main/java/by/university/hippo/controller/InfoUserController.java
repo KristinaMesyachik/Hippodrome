@@ -3,22 +3,23 @@ package by.university.hippo.controller;
 import by.university.hippo.entity.InfoUser;
 import by.university.hippo.service.impl.InfoUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/info")
 public class InfoUserController {
     @Autowired
     private InfoUserService infoUserService;
 
     @RequestMapping(value = {"/"}, method = RequestMethod.GET)
-    public List<InfoUser> findAll(Model model) {
+    public String findAll(Model model) {
         List<InfoUser> infoUsers = infoUserService.findAll();
-        return infoUsers;
+        model.addAttribute("infoUsers", infoUsers);
+        return "all-infoUsers";
     }
 }
