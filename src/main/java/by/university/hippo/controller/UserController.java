@@ -51,7 +51,7 @@ public class UserController {
         return "redirect:/api/users/";
     }
 
-    @RequestMapping(value = {"/addUser"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/addUser"}, method = RequestMethod.GET)
     public String addUserPage(Model model) {
         UserAddDTO user = new UserAddDTO();
         model.addAttribute("user", user);
@@ -59,7 +59,7 @@ public class UserController {
     }
 
     @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
-    public String save(@ModelAttribute(name = "user") User user) {
+    public String save(@ModelAttribute(name = "user") UserAddDTO user) {
             userService.save(user);
         return "successful-addUser";
     }

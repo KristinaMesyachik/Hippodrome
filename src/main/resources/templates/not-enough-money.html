@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>О заказе</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+<body>
+
+<th:block th:include="/_title"></th:block>
+<br><br><br>
+
+<h2 align="center"> У Вас не достаточно средств на счёте.</h2>
+<h2 align="center"> Пожалуйста, пополните счёт!</h2>
+
+<form th:action="@{/api/cards/}" method="get">
+    <input type="submit" value="Пополнить счет"/>
+</form>
+
+</body>
+</html>
