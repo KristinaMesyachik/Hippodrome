@@ -36,15 +36,13 @@ public class CardService implements IService<Card, Long> {
 
     @Override
     public void delete(Long id) {
-        Optional<Card> cardOptional = cardRepository.findById(id);
-        if (cardOptional.isEmpty()) {
-            throw new NoSuchHippoException("There is no card with ID = " + id + "in database");
-        } else if (cardOptional.get().getEnabled() == 1) {
-            cardOptional.get().setEnabled(0);
+        Card card = findById(id);
+        if (card.getEnabled() == 1) {
+            card.setEnabled(0);
         } else {
-            cardOptional.get().setEnabled(1);
+            card.setEnabled(1);
         }
-        cardRepository.save(cardOptional.get());
+        cardRepository.save(card);
     }
 
 //    @Override

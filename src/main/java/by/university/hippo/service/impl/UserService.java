@@ -3,6 +3,7 @@ package by.university.hippo.service.impl;
 import by.university.hippo.DTO.UserAddDTO;
 import by.university.hippo.entity.InfoUser;
 import by.university.hippo.entity.MyUserDetails;
+import by.university.hippo.entity.Service;
 import by.university.hippo.entity.User;
 import by.university.hippo.entity.enums.Role;
 import by.university.hippo.exception.NoSuchHippoException;
@@ -13,12 +14,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@org.springframework.stereotype.Service
 public class UserService implements IService<User, Long>, UserDetailsService {
 
     @Autowired
@@ -29,6 +29,9 @@ public class UserService implements IService<User, Long>, UserDetailsService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ServiceService serviceService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -57,7 +60,9 @@ public class UserService implements IService<User, Long>, UserDetailsService {
 
     @Override
     public void delete(Long id) {
-       userRepository.delete(findById(id));
+        Long ddd = findById(id).getInfoUser().getId();
+        userRepository.delete(findById(id));
+        infoUserService.delete(ddd);
     }
 
     //        @Override
@@ -86,32 +91,46 @@ public class UserService implements IService<User, Long>, UserDetailsService {
     }
 
     public void updateRole(Long userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isEmpty()) {
-            throw new NoSuchHippoException("There is no user with ID = " + userId + "in database");
+        User user = findById(userId);
+        if (user.getRole().equals(Role.USER)) {
+            user.setRole(Role.ADMIN);
         } else {
-            User user = userOptional.get();
-            if (user.getRole().equals(Role.USER)) {
-                user.setRole(Role.ADMIN);
-            } else {
-                user.setRole(Role.USER);
-            }
-            save(user);
+            user.setRole(Role.USER);
         }
+        save(user);
+    }
+
+    public int addFavorites(Long serviceId, String username) {
+        User user = findByLogin(username);
+        List<Service> serviceList = user.getFavorites();
+        Service service = serviceService.findById(serviceId);
+        serviceList.add(service);
+        user.setFavorites(serviceList);
+        save(user);
+        return user.getFavorites().size();
+    }
+
+    public int delFavorites(Long serviceId, String username) {
+        User user = findByLogin(username);
+        List<Service> serviceList = user.getFavorites();
+        serviceList.remove(serviceService.findById(serviceId));
+        user.setFavorites(serviceList);
+        save(user);
+        return user.getFavorites().size();
+    }
+
+    public List<Service> viewFavorites(String username) {
+        User user = findByLogin(username);
+        return user.getFavorites();
     }
 
     public void updateBlock(Long userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isEmpty()) {
-            throw new NoSuchHippoException("There is no user with ID = " + userId + "in database");
+        User user = findById(userId);
+        if (user.getEnabled() == 1) {
+            user.setEnabled(0);
         } else {
-            User user = userOptional.get();
-            if (user.getEnabled() == 1) {
-                user.setEnabled(0);
-            } else {
-                user.setEnabled(1);
-            }
-            save(user);
+            user.setEnabled(1);
         }
+        save(user);
     }
 }

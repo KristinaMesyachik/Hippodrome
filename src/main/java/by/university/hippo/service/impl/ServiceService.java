@@ -33,12 +33,23 @@ public class ServiceService implements IService<Service, Long> {
 
     @Override
     public void delete(Long id) {
-
+        Service service = findById(id);
+        if (service.getEnabled() == 1) {
+            service.setEnabled(0);
+        } else {
+            service.setEnabled(1);
+        }
+        save(service);
     }
 
-//    @Override
+    //    @Override
     public void save(Service entity) {
         serviceRepository.save(entity);
+    }
+
+    public List<Long> addFromBasket(Long id, List<Long> basket) {
+        basket.add(id);
+        return basket;
     }
 
     public List<Long> deleteFromBasket(Long id, List<Long> basket) {

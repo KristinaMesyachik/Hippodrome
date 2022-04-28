@@ -32,7 +32,7 @@ public class InfoUserService implements IService<InfoUser, Long> {
 
     @Override
     public void delete(Long id) {
-
+        infoUserRepository.delete(findById(id));
     }
 
 //    @Override

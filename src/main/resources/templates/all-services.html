@@ -25,6 +25,7 @@
             <th>Стоимость</th>
             <th>Место</th>
             <th>Время</th>
+            <th>Активность</th>
         </tr>
         <tr th:each="service : ${services}">
             <td th:utext="${service.id}">...</td>
@@ -33,12 +34,25 @@
             <td th:utext="${service.cost}">...</td>
             <td th:utext="${service.place}">...</td>
             <td th:utext="${service.time}">...</td>
-
+            <td th:utext="${service.enabled}">...</td>
             <td>
                 <form th:action="@{/api/services/addBasket/}" method="get">
                     <input type="hidden" th:name="serviceId" th:value="${service.id}"/>
-<!--                    <input type="hidden" th:name="strId" th:value="${strId}"/>-->
-                    <input type="submit" value="Добавить"/>
+                    <input type="submit" value="Добавить в карзину"/>
+                </form>
+                <form th:action="@{/api/users/addFavorites/}" method="get">
+                    <input type="hidden" th:name="serviceId" th:value="${service.id}"/>
+                    <input type="submit" value="Избрать"/>
+                </form>
+
+                <form th:action="@{/api/services/update/}" method="get">
+                    <input type="hidden" th:name="serviceId" th:value="${service.id}">
+                    <input type="submit" value="Изменить"/>
+                </form>
+
+                <form th:action="@{/api/services/delete/}" method="get">
+                    <input type="hidden" th:name="serviceId" th:value="${service.id}"/>
+                    <input type="submit" value="Блокировать"/>
                 </form>
             </td>
         </tr>

@@ -44,4 +44,12 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "userId"
             , cascade = CascadeType.ALL)
     private List<Order> orders;
+
+    @ManyToMany(cascade = CascadeType.MERGE,
+            fetch = FetchType.LAZY
+    )
+    @JoinTable(name ="user_has_service",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "service_id"))
+    private List<Service> favorites;
 }

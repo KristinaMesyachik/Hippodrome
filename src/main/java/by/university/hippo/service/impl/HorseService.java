@@ -33,15 +33,13 @@ public class HorseService implements IService<Horse, Long> {
 
     @Override
     public void delete(Long id) {
-        Optional<Horse> horseOptional = horseRepository.findById(id);
-        if (horseOptional.isEmpty()) {
-            throw new NoSuchHippoException("There is no horse with ID = " + id + "in database");
-        } else if (horseOptional.get().getEnabled() == 1) {
-            horseOptional.get().setEnabled(0);
+        Horse horse = findById(id);
+        if (horse.getEnabled() == 1) {
+            horse.setEnabled(0);
         } else {
-            horseOptional.get().setEnabled(1);
+            horse.setEnabled(1);
         }
-        horseRepository.save(horseOptional.get());
+        horseRepository.save(horse);
     }
 
 //    @Override

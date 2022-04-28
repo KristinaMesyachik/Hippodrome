@@ -1,6 +1,7 @@
 package by.university.hippo.controller;
 
 import by.university.hippo.DTO.UserAddDTO;
+import by.university.hippo.entity.Service;
 import by.university.hippo.entity.User;
 import by.university.hippo.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,5 +63,29 @@ public class UserController {
     public String save(@ModelAttribute(name = "user") UserAddDTO user) {
             userService.save(user);
         return "successful-addUser";
+    }
+
+    @RequestMapping(value = {"/addFavorites"}, method = RequestMethod.GET)
+    public String addFavoriteService(@RequestParam(name = "serviceId") Long serviceId, HttpSession session) {
+        String username = (String) session.getAttribute("username");
+        int countFavorite = userService.addFavorites(serviceId, username);
+        session.setAttribute("favorite", countFavorite);
+        return "redirect:/api/services/";
+    }
+
+    @RequestMapping(value = {"/deleteFavorites"}, method = RequestMethod.GET)
+    public String delFavoriteService(@RequestParam(name = "serviceId") Long serviceId, HttpSession session) {
+        String username = (String) session.getAttribute("username");
+        int countFavorite = userService.delFavorites(serviceId, username);
+        session.setAttribute("favorite", countFavorite);
+        return "redirect:/api/users/favorites";
+    }
+
+    @RequestMapping(value = {"/favorites"}, method = RequestMethod.GET)
+    public String viewFavoriteService(Model model, HttpSession session) {
+        String username = (String) session.getAttribute("username");
+        List<Service> favorites = userService.viewFavorites(username);
+        model.addAttribute("favorites", favorites);
+        return "favorites";
     }
 }

@@ -15,7 +15,8 @@
                 <a href="/api/users/addUser/"><h3>Регистрация</h3></a>
                 <a href="/login"><h4>Войти</h4></a>
             </div>
-
+        </tr>
+        <tr>
             <div sec:authorize="isAuthenticated()">
                 <form th:action="@{/api/services/before-logout}" method="get">
                     <input type="submit" value="Выйти"/>
@@ -25,11 +26,14 @@
 
             <th><a href="/api/services/basket/">
                 <h3>Корзина(<span th:text="${session.basket}"></span>)</h3></a></th>
+
+            <th><a href="/api/users/favorites/">
+                <h3>Избранное(<span th:text="${session.favorite}"></span>)</h3></a></th>
+
             <th>
                 <h3>Баланс: <span th:text="${session.balance}"></span></h3></a></th>
             </th>
 
         </tr>
     </table>
-
 </div>
