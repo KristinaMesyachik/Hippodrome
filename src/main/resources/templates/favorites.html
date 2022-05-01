@@ -12,7 +12,6 @@
 <table border="1" width="100%">
   <caption>Избранное</caption>
   <tr>
-    <th>id</th>
     <th>Название</th>
     <th>Описание</th>
     <th>Стоимость</th>
@@ -21,7 +20,6 @@
 
   </tr>
   <tr th:each="service : ${favorites}">
-    <td th:utext="${service.id}">...</td>
     <td th:utext="${service.title}">...</td>
     <td th:utext="${service.description}">...</td>
     <td th:utext="${service.cost}">...</td>

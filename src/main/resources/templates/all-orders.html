@@ -21,15 +21,25 @@
             <th>Статус</th>
             <th>Время</th>
             <th>Сумма</th>
-            <th>Пользователь</th>
-
+            <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                <th>Пользователь</th>
+            </div>
         </tr>
         <tr th:each="order : ${orders}">
             <td th:utext="${order.id}">...</td>
             <td th:utext="${order.status}">...</td>
             <td th:utext="${order.time}">...</td>
             <td th:utext="${order.amount}">...</td>
-            <td th:utext="${order.userId}">...</td>
+
+            <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                <td th:utext="${order.userId}">...</td>
+                <td>
+                    <form th:action="@{/api/orders/updateStatus/}" method="get">
+                        <input type="hidden" th:name="orderId" th:value="${order.id}"/>
+                        <input type="submit" value="Активировать"/>
+                    </form>
+                </td>
+            </div>
 
         </tr>
     </table>

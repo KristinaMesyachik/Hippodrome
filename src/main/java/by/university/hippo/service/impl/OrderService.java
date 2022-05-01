@@ -4,6 +4,7 @@ import by.university.hippo.controller.ServiceController;
 import by.university.hippo.entity.Order;
 import by.university.hippo.entity.Service;
 import by.university.hippo.entity.User;
+import by.university.hippo.entity.enums.Role;
 import by.university.hippo.entity.enums.Status;
 import by.university.hippo.exception.NoSuchHippoException;
 import by.university.hippo.repository.IOrderRepository;
@@ -14,6 +15,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static by.university.hippo.entity.enums.Status.READY;
 
 @org.springframework.stereotype.Service
 public class OrderService implements IService<Order, Long> {
@@ -41,12 +44,25 @@ public class OrderService implements IService<Order, Long> {
         return orderOptional.get();
     }
 
+    public List<Order> findByUsername(String username) {
+        return orderRepository.findByUserId(userService.findByLogin(username).getId());
+    }
+
     @Override
     public void delete(Long id) {
 
     }
 
-//    @Override
+    public void updateStatus(Long orderId) {
+        Order order = findById(orderId);
+        if (order.getStatus().equals(Status.IN_PROGRESS)) {
+            order.setStatus(Status.READY);
+        } else {
+            order.setStatus(Status.IN_PROGRESS);
+        }
+        save(order);
+    }
+    //    @Override
     public void save(Order entity) {
         orderRepository.save(entity);
     }

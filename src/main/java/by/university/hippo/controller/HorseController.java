@@ -3,6 +3,7 @@ package by.university.hippo.controller;
 import by.university.hippo.entity.Horse;
 import by.university.hippo.service.impl.HorseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,6 +27,7 @@ public class HorseController {
         return "all-horses";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/addHorse"}, method = RequestMethod.GET)
     public String showAddHorsePage(Model model) {
         Horse horse = new Horse();
@@ -33,12 +35,14 @@ public class HorseController {
         return "addHorse";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
     public String save(@ModelAttribute(name = "horse") Horse horse) {
         horseService.save(horse);
         return "redirect:/api/horses/";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/update"}, method = RequestMethod.GET)
     public String update(@RequestParam(name = "horseId") Long horseId, Model model) {
         Horse horse = horseService.findById(horseId);
@@ -46,6 +50,7 @@ public class HorseController {
         return "addHorse";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/delete"}, method = RequestMethod.GET)
     public String delete(@RequestParam(name = "horseId") Long horseId) {
         horseService.delete(horseId);

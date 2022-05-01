@@ -5,6 +5,7 @@ import by.university.hippo.entity.Service;
 import by.university.hippo.entity.User;
 import by.university.hippo.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/"}, method = RequestMethod.GET)
     public String findAll(Model model) {
         List<User> users = userService.findAll();
@@ -26,6 +28,7 @@ public class UserController {
         return "all-users";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/info"}, method = RequestMethod.GET)
     public String viewPeople(Model model, @RequestParam Long userId) {
         User user = userService.findById(userId);
@@ -34,18 +37,21 @@ public class UserController {
         return "about-user";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/updateRole"}, method = RequestMethod.GET)
     public String updateRole(@RequestParam(name = "userId") Long userId) {
         userService.updateRole(userId);
         return "redirect:/api/users/";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/updateBlock"}, method = RequestMethod.GET)
     public String updateBlock(@RequestParam(name = "userId") Long userId) {
         userService.updateBlock(userId);
         return "redirect:/api/users/";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/delete")
     public String delete(@RequestParam(name = "userId") Long userId) {
         userService.delete(userId);
@@ -59,12 +65,14 @@ public class UserController {
         return "addUser";
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
     public String save(@ModelAttribute(name = "user") UserAddDTO user) {
             userService.save(user);
         return "successful-addUser";
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/addFavorites"}, method = RequestMethod.GET)
     public String addFavoriteService(@RequestParam(name = "serviceId") Long serviceId, HttpSession session) {
         String username = (String) session.getAttribute("username");
@@ -73,6 +81,7 @@ public class UserController {
         return "redirect:/api/services/";
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/deleteFavorites"}, method = RequestMethod.GET)
     public String delFavoriteService(@RequestParam(name = "serviceId") Long serviceId, HttpSession session) {
         String username = (String) session.getAttribute("username");
@@ -81,6 +90,7 @@ public class UserController {
         return "redirect:/api/users/favorites";
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/favorites"}, method = RequestMethod.GET)
     public String viewFavoriteService(Model model, HttpSession session) {
         String username = (String) session.getAttribute("username");

@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
 public class ServiceService implements IService<Service, Long> {
@@ -29,6 +30,11 @@ public class ServiceService implements IService<Service, Long> {
             throw new NoSuchHippoException("There is no service with ID = " + id + "in database");
         }
         return serviceOptional.get();
+    }
+
+    @Transactional
+    public List<Service> findByEnabledIs() {
+        return serviceRepository.findByEnabledIs(1);
     }
 
     @Override
