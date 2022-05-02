@@ -4,7 +4,7 @@ import by.university.hippo.DTO.StaffDTO;
 import by.university.hippo.entity.Staff;
 import by.university.hippo.exception.NoSuchHippoException;
 import by.university.hippo.repository.IStaffRepository;
-import by.university.hippo.service.IService;
+import by.university.hippo.service.interfaces.IStaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class StaffService implements IService<Staff, Long, StaffDTO> {
+public class StaffService implements IStaffService {
     @Autowired
     private IStaffRepository staffRepository;
 
@@ -45,7 +45,7 @@ public class StaffService implements IService<Staff, Long, StaffDTO> {
         save(staff);
     }
 
-//    @Override
+    @Override
     public void save(StaffDTO entity) {
         staffRepository.save(mapToEntity(entity));
     }

@@ -10,7 +10,7 @@ import by.university.hippo.entity.User;
 import by.university.hippo.entity.enums.Role;
 import by.university.hippo.exception.NoSuchHippoException;
 import by.university.hippo.repository.IUserRepository;
-import by.university.hippo.service.IService;
+import by.university.hippo.service.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,7 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
-public class UserService implements IService<User, Long, UserDTO>, UserDetailsService {
+public class UserService implements IUserService, UserDetailsService {
 
     @Autowired
     private IUserRepository userRepository;
@@ -44,11 +44,13 @@ public class UserService implements IService<User, Long, UserDTO>, UserDetailsSe
         return new MyUserDetails(user);
     }
 
+    @Override
     public User findByLoginUser(String login) {
         return userRepository.findByLogin(login)
                 .orElseThrow(() -> new UsernameNotFoundException("user not found"));
     }
 
+    @Override
     public UserDTO findByLogin(String login) {
         return mapToDTO(userRepository.findByLogin(login)
                 .orElseThrow(() -> new UsernameNotFoundException("user not found")));
@@ -66,6 +68,7 @@ public class UserService implements IService<User, Long, UserDTO>, UserDetailsSe
         return mapToDTO(findByIdUser(id));
     }
 
+    @Override
     public User findByIdUser(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) {
@@ -81,7 +84,7 @@ public class UserService implements IService<User, Long, UserDTO>, UserDetailsSe
         infoUserService.delete(userTemp);
     }
 
-    //        @Override
+    @Override
     public void save(UserAddDTO entity) {
         User user = new User();
         InfoUser infoUser = new InfoUser();
@@ -102,10 +105,12 @@ public class UserService implements IService<User, Long, UserDTO>, UserDetailsSe
         userRepository.save(user);
     }
 
+    @Override
     public void save(User entity) {
         userRepository.save(entity);
     }
 
+    @Override
     public void updateRole(Long userId) {
         User user = findByIdUser(userId);
         if (user.getRole().equals(Role.USER)) {
@@ -116,6 +121,7 @@ public class UserService implements IService<User, Long, UserDTO>, UserDetailsSe
         save(user);
     }
 
+    @Override
     public int addFavorites(Long serviceId, String username) {
         User user = findByLoginUser(username);
         List<Service> serviceList = user.getFavorites();
@@ -126,6 +132,7 @@ public class UserService implements IService<User, Long, UserDTO>, UserDetailsSe
         return user.getFavorites().size();
     }
 
+    @Override
     public int delFavorites(Long serviceId, String username) {
         User user = findByLoginUser(username);
         List<Service> serviceList = user.getFavorites();
@@ -135,6 +142,7 @@ public class UserService implements IService<User, Long, UserDTO>, UserDetailsSe
         return user.getFavorites().size();
     }
 
+    @Override
     public List<ServiceDTO> viewFavorites(String username) {
         User user = findByLoginUser(username);
         List<ServiceDTO> serviceDTOS = new ArrayList<>();
@@ -144,6 +152,7 @@ public class UserService implements IService<User, Long, UserDTO>, UserDetailsSe
         return serviceDTOS;
     }
 
+    @Override
     public void updateBlock(Long userId) {
         User user = findByIdUser(userId);
         if (user.getEnabled() == 0) {

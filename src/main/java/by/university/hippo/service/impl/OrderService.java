@@ -8,7 +8,7 @@ import by.university.hippo.entity.User;
 import by.university.hippo.entity.enums.Status;
 import by.university.hippo.exception.NoSuchHippoException;
 import by.university.hippo.repository.IOrderRepository;
-import by.university.hippo.service.IService;
+import by.university.hippo.service.interfaces.IOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -22,7 +22,7 @@ import static by.university.hippo.controller.ServiceController.discount;
 
 
 @org.springframework.stereotype.Service
-public class OrderService implements IService<Order, Long, OrderDTO> {
+public class OrderService implements IOrderService {
 
     @Autowired
     private IOrderRepository orderRepository;
@@ -49,7 +49,7 @@ public class OrderService implements IService<Order, Long, OrderDTO> {
         return mapToDTO(orderOptional.get());
     }
 
-
+    @Override
     public List<OrderDTO> findByUsername(String username) {
         List<Order> orders = orderRepository.findByUserId(userService.findByLogin(username).getId());
         List<OrderDTO> orderDTOS = new ArrayList<>();
@@ -64,6 +64,7 @@ public class OrderService implements IService<Order, Long, OrderDTO> {
 //TODO
     }
 
+    @Override
     public void updateStatus(Long orderId) {
         OrderDTO order = findById(orderId);
         if (order.getStatus().equals(Status.IN_PROGRESS)) {
@@ -74,15 +75,17 @@ public class OrderService implements IService<Order, Long, OrderDTO> {
         save(order);
     }
 
-    //    @Override
+    @Override
     public void save(Order entity) {
         orderRepository.save(entity);
     }
 
+    @Override
     public void save(OrderDTO entity) {
         save(mapToEntity(entity));
     }
 
+    @Override
     public void beforeSave(List<Long> basket, String username) {
         User user = userService.findByLoginUser(username);
         double balanceDiscount = BigDecimal.valueOf(100)

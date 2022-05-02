@@ -5,7 +5,7 @@ import by.university.hippo.entity.Card;
 import by.university.hippo.entity.User;
 import by.university.hippo.exception.NoSuchHippoException;
 import by.university.hippo.repository.ICardRepository;
-import by.university.hippo.service.IService;
+import by.university.hippo.service.interfaces.ICardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class CardService implements IService<Card, Long, CardDTO> {
+public class CardService implements ICardService {
 
     @Autowired
     private ICardRepository cardRepository;
@@ -35,6 +35,7 @@ public class CardService implements IService<Card, Long, CardDTO> {
         return mapToDTO(findByIdCard(id));
     }
 
+    @Override
     public Card findByIdCard(Long id) {
         Optional<Card> cardOptional = cardRepository.findById(id);
         if (cardOptional.isEmpty()) {
@@ -54,7 +55,7 @@ public class CardService implements IService<Card, Long, CardDTO> {
         cardRepository.save(card);
     }
 
-    //    @Override
+    @Override
     public void save(CardDTO entity, String username) {
         User user = userService.findByLoginUser(username);
         entity.setUserId(user.getId());

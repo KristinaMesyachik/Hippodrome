@@ -4,7 +4,7 @@ import by.university.hippo.DTO.InfoUserDTO;
 import by.university.hippo.entity.InfoUser;
 import by.university.hippo.exception.NoSuchHippoException;
 import by.university.hippo.repository.IInfoUserRepository;
-import by.university.hippo.service.IService;
+import by.university.hippo.service.interfaces.IInfoUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class InfoUserService implements IService<InfoUser, Long, InfoUserDTO> {
+public class InfoUserService implements IInfoUserService {
 
     @Autowired
     private IInfoUserRepository infoUserRepository;
@@ -30,6 +30,7 @@ public class InfoUserService implements IService<InfoUser, Long, InfoUserDTO> {
         return mapToDTO(findByIdInfo(id));
     }
 
+    @Override
     public InfoUser findByIdInfo(Long id) {
         Optional<InfoUser> infoUserOptional = infoUserRepository.findById(id);
         if (infoUserOptional.isEmpty()) {
@@ -43,7 +44,7 @@ public class InfoUserService implements IService<InfoUser, Long, InfoUserDTO> {
         infoUserRepository.deleteById(id);
     }
 
-    //    @Override
+    @Override
     public void save(InfoUser entity) {
         infoUserRepository.save(entity);
     }

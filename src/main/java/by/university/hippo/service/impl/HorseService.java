@@ -1,11 +1,10 @@
 package by.university.hippo.service.impl;
 
 import by.university.hippo.DTO.HorseDTO;
-import by.university.hippo.DTO.ServiceDTO;
 import by.university.hippo.entity.Horse;
 import by.university.hippo.exception.NoSuchHippoException;
 import by.university.hippo.repository.IHorseRepository;
-import by.university.hippo.service.IService;
+import by.university.hippo.service.interfaces.IHorseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,7 @@ import java.util.stream.Collectors;
 
 
 @Service
-public class HorseService implements IService<Horse, Long, HorseDTO> {
+public class HorseService implements IHorseService {
 
     @Autowired
     private IHorseRepository horseRepository;
@@ -53,7 +52,7 @@ public class HorseService implements IService<Horse, Long, HorseDTO> {
         }
     }
 
-    //    @Override
+    @Override
     public void save(HorseDTO entity) {
         horseRepository.save(mapToEntity(entity));
     }

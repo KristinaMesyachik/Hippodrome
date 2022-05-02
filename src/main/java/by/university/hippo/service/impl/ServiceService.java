@@ -4,7 +4,7 @@ import by.university.hippo.DTO.ServiceDTO;
 import by.university.hippo.entity.Service;
 import by.university.hippo.exception.NoSuchHippoException;
 import by.university.hippo.repository.IServiceRepository;
-import by.university.hippo.service.IService;
+import by.university.hippo.service.interfaces.IServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
-public class ServiceService implements IService<Service, Long, ServiceDTO> {
+public class ServiceService implements IServiceService {
 
     @Autowired
     private IServiceRepository serviceRepository;
@@ -37,6 +37,7 @@ public class ServiceService implements IService<Service, Long, ServiceDTO> {
         return mapToDTO(serviceOptional.get());
     }
 
+    @Override
     @Transactional
     public List<ServiceDTO> findByEnabledIs() {
         return serviceRepository.findByEnabledIs(1).stream()
@@ -55,21 +56,24 @@ public class ServiceService implements IService<Service, Long, ServiceDTO> {
         save(service);
     }//TODO del check
 
-    //    @Override
+    @Override
     public void save(ServiceDTO entity) {
         serviceRepository.save(mapToEntity(entity));
     }
 
+    @Override
     public List<Long> addFromBasket(Long id, List<Long> basket) {
         basket.add(id);
         return basket;
     }
 
+    @Override
     public List<Long> deleteFromBasket(Long id, List<Long> basket) {
         basket.remove(id);
         return basket;
     }
 
+    @Override
     @Transactional
     public List<ServiceDTO> viewBasket(List<Long> basket) {
         List<ServiceDTO> services = new ArrayList<>();
