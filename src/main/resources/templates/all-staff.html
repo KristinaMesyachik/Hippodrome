@@ -36,7 +36,7 @@
             <td th:utext="${staff.middlename}">...</td>
             <td th:utext="${staff.phone}">...</td>
             <td th:utext="${staff.mail}">...</td>
-            <td th:utext="${staff.department}">...</td>
+            <td th:utext="${staff.department.value}">...</td>
             <td th:utext="${staff.enabled}">...</td>
             <td>
                 <form th:action="@{/api/staff/update/}" method="get">

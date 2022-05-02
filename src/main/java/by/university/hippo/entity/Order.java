@@ -32,6 +32,9 @@ public class Order implements Serializable {
     @Column(name = "amount")
     private double amount;
 
+    @Column(name = "amount_with_sale")
+    private double amountWithSale;
+
     @ManyToMany(cascade = CascadeType.MERGE,
             fetch = FetchType.LAZY
     )

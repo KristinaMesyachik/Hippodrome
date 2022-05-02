@@ -1,6 +1,6 @@
 package by.university.hippo.controller;
 
-import by.university.hippo.entity.Horse;
+import by.university.hippo.DTO.HorseDTO;
 import by.university.hippo.service.impl.HorseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,7 +22,7 @@ public class HorseController {
 
     @RequestMapping(value = {"/"}, method = RequestMethod.GET)
     public String findAll(Model model) {
-        List<Horse> horses = horseService.findAll();
+        List<HorseDTO> horses = horseService.findAll();
         model.addAttribute("horses",horses);
         return "all-horses";
     }
@@ -30,14 +30,14 @@ public class HorseController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/addHorse"}, method = RequestMethod.GET)
     public String showAddHorsePage(Model model) {
-        Horse horse = new Horse();
+        HorseDTO horse = new HorseDTO();
         model.addAttribute("horse", horse);
         return "addHorse";
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
-    public String save(@ModelAttribute(name = "horse") Horse horse) {
+    public String save(@ModelAttribute(name = "horse") HorseDTO horse) {
         horseService.save(horse);
         return "redirect:/api/horses/";
     }
@@ -45,7 +45,7 @@ public class HorseController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/update"}, method = RequestMethod.GET)
     public String update(@RequestParam(name = "horseId") Long horseId, Model model) {
-        Horse horse = horseService.findById(horseId);
+        HorseDTO horse = horseService.findById(horseId);
         model.addAttribute("horse", horse);
         return "addHorse";
     }

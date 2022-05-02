@@ -1,7 +1,7 @@
 package by.university.hippo.controller;
 
-import by.university.hippo.entity.Service;
-import by.university.hippo.entity.User;
+import by.university.hippo.DTO.ServiceDTO;
+import by.university.hippo.DTO.UserDTO;
 import by.university.hippo.service.impl.ServiceService;
 import by.university.hippo.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,17 +28,19 @@ public class ServiceController {
 
     public static List<Long> basket = new ArrayList<>();
 
+    public static BigDecimal discount = BigDecimal.valueOf(0.01);
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/admin"}, method = RequestMethod.GET)
     public String findAll(Model model) {
-        List<Service> services = serviceService.findAll();
+        List<ServiceDTO> services = serviceService.findAll();
         model.addAttribute("services", services);
         return "all-services";
     }
 
     @RequestMapping(value = {"/"}, method = RequestMethod.GET)
     public String findAllUser(Model model) {
-        List<Service> services = serviceService.findByEnabledIs();
+        List<ServiceDTO> services = serviceService.findByEnabledIs();
         model.addAttribute("services", services);
         return "all-services";
     }
@@ -47,8 +50,9 @@ public class ServiceController {
     public String afterRegistration(HttpSession session) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        User user = userService.findByLogin(username);
-        session.setAttribute("balance", user.getBalance());
+        UserDTO user = userService.findByLogin(username);
+        double balanceDiscount = discount.multiply(BigDecimal.valueOf(user.getBalance())).doubleValue();
+        session.setAttribute("balanceDiscount", balanceDiscount);
         session.setAttribute("username", username);
         session.setAttribute("basket", basket.size());
         session.setAttribute("favorite", user.getFavorites().size());
@@ -66,7 +70,7 @@ public class ServiceController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/addService"}, method = RequestMethod.GET)
     public String showAddServicePage(Model model) {
-        Service service = new Service();
+        ServiceDTO service = new ServiceDTO();
         model.addAttribute("service", service);
         return "addService";
     }
@@ -74,7 +78,7 @@ public class ServiceController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/update"}, method = RequestMethod.GET)
     public String update(@RequestParam(name = "serviceId") Long serviceId, Model model) {
-        Service service = serviceService.findById(serviceId);
+        ServiceDTO service = serviceService.findById(serviceId);
         model.addAttribute("service", service);
         return "addService";
     }
@@ -88,7 +92,7 @@ public class ServiceController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
-    public String save(@ModelAttribute(name = "service") Service service) {
+    public String save(@ModelAttribute(name = "service") ServiceDTO service) {
         serviceService.save(service);
         return "redirect:/api/services/admin/";
     }
@@ -104,7 +108,7 @@ public class ServiceController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/basket"}, method = RequestMethod.GET)
     public String basket(Model model) {
-        List<Service> services = serviceService.viewBasket(basket);
+        List<ServiceDTO> services = serviceService.viewBasket(basket);
         model.addAttribute("services", services);
         return "basket";
     }

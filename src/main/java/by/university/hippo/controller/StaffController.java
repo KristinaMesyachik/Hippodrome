@@ -1,6 +1,6 @@
 package by.university.hippo.controller;
 
-import by.university.hippo.entity.Staff;
+import by.university.hippo.DTO.StaffDTO;
 import by.university.hippo.service.impl.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,7 +23,7 @@ public class StaffController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/"}, method = RequestMethod.GET)
     public String findAll(Model model) {
-        List<Staff> staff = staffService.findAll();
+        List<StaffDTO> staff = staffService.findAll();
         model.addAttribute("staff", staff);
         return "all-staff";
     }
@@ -31,14 +31,14 @@ public class StaffController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/addStaff"}, method = RequestMethod.GET)
     public String showAddStaffPage(Model model) {
-        Staff staff = new Staff();
+        StaffDTO staff = new StaffDTO();
         model.addAttribute("staff", staff);
         return "addStaff";
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
-    public String save(@ModelAttribute(name = "staff") Staff staff) {
+    public String save(@ModelAttribute(name = "staff") StaffDTO staff) {
         staffService.save(staff);
         return "redirect:/api/staff/";
     }
@@ -46,7 +46,7 @@ public class StaffController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/update"}, method = RequestMethod.GET)
     public String update(@RequestParam(name = "staffId") Long staffId, Model model) {
-        Staff staff = staffService.findById(staffId);
+        StaffDTO staff = staffService.findById(staffId);
         model.addAttribute("staff", staff);
         return "addStaff";
     }

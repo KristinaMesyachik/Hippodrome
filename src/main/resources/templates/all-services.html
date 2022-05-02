@@ -18,11 +18,14 @@
     <form th:action="@{/api/services/admin/}" method="get">
         <input type="submit" value="Админ-версия"/>
     </form>
+
     <form th:action="@{/api/services/}" method="get">
         <input type="submit" value="Пользовательская-версия"/>
     </form>
-    <a href="addService">Добавить услугу</a>
 
+    <form th:action="@{/api/services/addService}" method="get">
+        <input type="submit" value="Добавить услугу"/>
+    </form>
 </div>
 <div>
     <table border="1" width="100%">
@@ -36,8 +39,8 @@
             <th>Описание</th>
             <th>Стоимость</th>
             <th>Место</th>
+            <th>Дата</th>
             <th>Время</th>
-
         </tr>
         <tr th:each="service : ${services}">
             <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
@@ -47,7 +50,8 @@
             <td th:utext="${service.title}">...</td>
             <td th:utext="${service.description}">...</td>
             <td th:utext="${service.cost}">...</td>
-            <td th:utext="${service.place}">...</td>
+            <td th:utext="${service.place.value}">...</td>
+            <td th:utext="${service.date}">...</td>
             <td th:utext="${service.time}">...</td>
             <div sec:authorize="isAuthenticated()">
                 <td>

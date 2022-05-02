@@ -1,6 +1,6 @@
 package by.university.hippo.controller;
 
-import by.university.hippo.entity.Card;
+import by.university.hippo.DTO.CardDTO;
 import by.university.hippo.service.impl.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,7 +21,7 @@ public class CardController {
 //    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/"}, method = RequestMethod.GET)
     public String findAllUser(Model model) {
-        List<Card> cards = cardService.findAll();
+        List<CardDTO> cards = cardService.findAll();
         model.addAttribute("cards", cards);
         return "all-cards";
     }
@@ -29,14 +29,14 @@ public class CardController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/addCard"}, method = RequestMethod.GET)
     public String showAddCardPage(Model model) {
-        Card card = new Card();
+        CardDTO card = new CardDTO();
         model.addAttribute("card", card);
         return "addCard";
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
-    public String save(@ModelAttribute(name = "card") Card card
+    public String save(@ModelAttribute(name = "card") CardDTO card
             , HttpSession session) {
         String username = (String) session.getAttribute("username");
         cardService.save(card, username);
@@ -46,7 +46,7 @@ public class CardController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/update"}, method = RequestMethod.GET)
     public String update(@RequestParam(name = "cardId") Long cardId, Model model) {
-        Card card = cardService.findById(cardId);
+        CardDTO card = cardService.findById(cardId);
         model.addAttribute("card", card);
         return "addCard";
     }

@@ -1,8 +1,10 @@
 package by.university.hippo.controller;
 
+import by.university.hippo.DTO.InfoUserDTO;
+import by.university.hippo.DTO.ServiceDTO;
 import by.university.hippo.DTO.UserAddDTO;
-import by.university.hippo.entity.Service;
-import by.university.hippo.entity.User;
+import by.university.hippo.DTO.UserDTO;
+import by.university.hippo.service.impl.InfoUserService;
 import by.university.hippo.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,10 +22,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private InfoUserService infoUserService;
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/"}, method = RequestMethod.GET)
     public String findAll(Model model) {
-        List<User> users = userService.findAll();
+        List<UserDTO> users = userService.findAll();
         model.addAttribute("users", users);
         return "all-users";
     }
@@ -31,8 +36,9 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/info"}, method = RequestMethod.GET)
     public String viewPeople(Model model, @RequestParam Long userId) {
-        User user = userService.findById(userId);
-        model.addAttribute("info", user.getInfoUser());
+        UserDTO user = userService.findById(userId);
+        InfoUserDTO infoUserDTO = infoUserService.findById(user.getInfoUserId());
+        model.addAttribute("info", infoUserDTO);
         model.addAttribute("user", user);
         return "about-user";
     }
@@ -94,7 +100,7 @@ public class UserController {
     @RequestMapping(value = {"/favorites"}, method = RequestMethod.GET)
     public String viewFavoriteService(Model model, HttpSession session) {
         String username = (String) session.getAttribute("username");
-        List<Service> favorites = userService.viewFavorites(username);
+        List<ServiceDTO> favorites = userService.viewFavorites(username);
         model.addAttribute("favorites", favorites);
         return "favorites";
     }

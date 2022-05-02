@@ -32,7 +32,7 @@
         <tr th:each="horse : ${horses}">
             <td th:utext="${horse.nickname}">...</td>
             <td th:utext="${horse.breed}">...</td>
-            <td th:utext="${horse.gender}">...</td>
+            <td th:utext="${horse.gender.value}">...</td>
             <td th:utext="${horse.age}">...</td>
             <td th:utext="${horse.height}">...</td>
             <td th:utext="${horse.weight}">...</td>

@@ -1,7 +1,7 @@
 package by.university.hippo.controller;
 
-import by.university.hippo.entity.Order;
-import by.university.hippo.entity.User;
+import by.university.hippo.DTO.OrderDTO;
+import by.university.hippo.DTO.UserDTO;
 import by.university.hippo.service.impl.OrderService;
 import by.university.hippo.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.util.List;
+
+import static by.university.hippo.controller.ServiceController.discount;
 
 
 @Controller
@@ -30,16 +33,16 @@ public class OrderController {
     @RequestMapping(value = {"/"}, method = RequestMethod.GET)
     public String findAllUser(Model model, HttpSession session) {
         String username = (String) session.getAttribute("username");
-        List<Order> orders = orderService.findByUsername(username);
-        model.addAttribute("orders",orders);
+        List<OrderDTO> orders = orderService.findByUsername(username);
+        model.addAttribute("orders", orders);
         return "all-orders";
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/admin"}, method = RequestMethod.GET)
     public String findAll(Model model, HttpSession session) {
-        List<Order> orders = orderService.findAll();
-        model.addAttribute("orders",orders);
+        List<OrderDTO> orders = orderService.findAll();
+        model.addAttribute("orders", orders);
         return "all-orders";
     }
 
@@ -47,11 +50,22 @@ public class OrderController {
     @RequestMapping(value = {"/addOrder"}, method = RequestMethod.GET)
     public String addOrderPage(HttpSession session) {
         String username = (String) session.getAttribute("username");
-        User user = userService.findByLogin(username);
-        String str = orderService.beforeSave(ServiceController.basket, username);
+        UserDTO user = userService.findByLogin(username);
+        orderService.beforeSave(ServiceController.basket, username);
         session.setAttribute("basket", ServiceController.basket.size());
-        session.setAttribute("balance", user.getBalance());
-        return str;
+        double balanceDiscount = discount.multiply(BigDecimal.valueOf(user.getBalance())).doubleValue();
+        session.setAttribute("balanceDiscount", balanceDiscount);
+        return "redirect:/api/orders/updateDiscount";
+    }
+
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @RequestMapping(value = {"/updateDiscount"}, method = RequestMethod.GET)
+    public String updateDiscount(HttpSession session) {
+        String username = (String) session.getAttribute("username");
+        UserDTO user = userService.findByLogin(username);
+        double balanceDiscount = discount.multiply(BigDecimal.valueOf(user.getBalance())).doubleValue();
+        session.setAttribute("balanceDiscount", balanceDiscount);
+        return "redirect:/api/orders/";
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

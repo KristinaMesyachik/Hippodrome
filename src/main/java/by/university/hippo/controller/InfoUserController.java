@@ -1,6 +1,6 @@
 package by.university.hippo.controller;
 
-import by.university.hippo.entity.InfoUser;
+import by.university.hippo.DTO.InfoUserDTO;
 import by.university.hippo.service.impl.InfoUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +20,7 @@ public class InfoUserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/"}, method = RequestMethod.GET)
     public String findAll(Model model) {
-        List<InfoUser> infoUsers = infoUserService.findAll();
+        List<InfoUserDTO> infoUsers = infoUserService.findAll();
         model.addAttribute("infoUsers", infoUsers);
         return "all-infoUsers";
     }

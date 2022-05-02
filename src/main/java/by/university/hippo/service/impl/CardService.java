@@ -1,5 +1,6 @@
 package by.university.hippo.service.impl;
 
+import by.university.hippo.DTO.CardDTO;
 import by.university.hippo.entity.Card;
 import by.university.hippo.entity.User;
 import by.university.hippo.exception.NoSuchHippoException;
@@ -9,10 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-public class CardService implements IService<Card, Long> {
+public class CardService implements IService<Card, Long, CardDTO> {
 
     @Autowired
     private ICardRepository cardRepository;
@@ -21,12 +24,18 @@ public class CardService implements IService<Card, Long> {
     private UserService userService;
 
     @Override
-    public List<Card> findAll() {
-        return cardRepository.findAll();
+    public List<CardDTO> findAll() {
+        return cardRepository.findAll().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Card findById(Long id) {
+    public CardDTO findById(Long id) {
+        return mapToDTO(findByIdCard(id));
+    }
+
+    public Card findByIdCard(Long id) {
         Optional<Card> cardOptional = cardRepository.findById(id);
         if (cardOptional.isEmpty()) {
             throw new NoSuchHippoException("There is no card with ID = " + id + "in database");
@@ -36,7 +45,7 @@ public class CardService implements IService<Card, Long> {
 
     @Override
     public void delete(Long id) {
-        Card card = findById(id);
+        Card card = findByIdCard(id);
         if (card.getEnabled() == 1) {
             card.setEnabled(0);
         } else {
@@ -45,10 +54,40 @@ public class CardService implements IService<Card, Long> {
         cardRepository.save(card);
     }
 
-//    @Override
-    public void save(Card entity, String username) {
-        User user = userService.findByLogin(username);
+    //    @Override
+    public void save(CardDTO entity, String username) {
+        User user = userService.findByLoginUser(username);
         entity.setUserId(user.getId());
-        cardRepository.save(entity);
+        cardRepository.save(mapToEntity(entity));
+    }
+
+    @Override
+    public CardDTO mapToDTO(Card entity) {
+        CardDTO cardDTO = new CardDTO();
+        cardDTO.setId(entity.getId());
+        cardDTO.setNumber(entity.getNumber());
+        cardDTO.setBalance(entity.getBalance());
+        cardDTO.setUserId(entity.getUserId());
+        if (entity.getEnabled() == 0) {
+            cardDTO.setEnabled("Блокировано");
+        } else {
+            cardDTO.setEnabled("Активно");
+        }
+        return cardDTO;
+    }
+
+    @Override
+    public Card mapToEntity(CardDTO dto) {
+        Card card = new Card();
+        card.setId(dto.getId());
+        card.setNumber(dto.getNumber());
+        card.setBalance(dto.getBalance());
+        card.setUserId(dto.getUserId());
+        if (Objects.equals(dto.getEnabled(), "Блокировано")) {
+            card.setEnabled(0);
+        } else {
+            card.setEnabled(1);
+        }
+        return card;
     }
 }
