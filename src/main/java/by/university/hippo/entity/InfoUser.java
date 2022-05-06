@@ -30,7 +30,4 @@ public class InfoUser implements Serializable {
 
     @Column(name = "telephone")
     private String phone;
-
-    @Column(name = "mail")
-    private String mail;
 }

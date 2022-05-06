@@ -28,33 +28,38 @@ public class HorseService implements IHorseService {
     }
 
     @Override
-    public HorseDTO findById(Long id) {
+    public Horse findById(Long id) {
         Optional<Horse> horseOptional = horseRepository.findById(id);
         if (horseOptional.isEmpty()) {
             throw new NoSuchHippoException("There is no horse with ID = " + id + "in database");
         }
-        return mapToDTO(horseOptional.get());
+        return horseOptional.get();
+    }
+
+    @Override
+    public HorseDTO findByIdDTO(Long id) {
+        return mapToDTO(findById(id));
     }
 
     @Override
     public void delete(Long id) {
-        Optional<Horse> horseOptional = horseRepository.findById(id);
-        if (horseOptional.isEmpty()) {
-            throw new NoSuchHippoException("There is no horse with ID = " + id + "in database");
+        Horse horse = findById(id);
+        if (horse.getEnabled() == 1) {
+            horse.setEnabled(0);
         } else {
-            Horse horse = horseOptional.get();
-            if (horse.getEnabled() == 1) {
-                horse.setEnabled(0);
-            } else {
-                horse.setEnabled(1);
-            }
-            horseRepository.save(horse);
+            horse.setEnabled(1);
         }
+        horseRepository.save(horse);
     }
 
     @Override
-    public void save(HorseDTO entity) {
-        horseRepository.save(mapToEntity(entity));
+    public void save(HorseDTO dto) {
+        save(mapToEntity(dto));
+    }
+
+    @Override
+    public void save(Horse entity) {
+        horseRepository.save(entity);
     }
 
     @Override
@@ -70,8 +75,6 @@ public class HorseService implements IHorseService {
         } else {
             horseDTO.setEnabled("Активно");
         }
-        horseDTO.setHeight(entity.getHeight());
-        horseDTO.setWeight(entity.getWeight());
         horseDTO.setRating(entity.getRating());
         return horseDTO;
     }
@@ -89,9 +92,21 @@ public class HorseService implements IHorseService {
         } else {
             service.setEnabled(1);
         }
-        service.setHeight(dto.getHeight());
-        service.setWeight(dto.getWeight());
         service.setRating(dto.getRating());
         return service;
+    }
+
+    @Override
+    public List<HorseDTO> mapListToDTO(List<Horse> list) {
+        return list.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Horse> mapListToEntity(List<HorseDTO> dto) {
+        return dto.stream()
+                .map(this::mapToEntity)
+                .collect(Collectors.toList());
     }
 }

@@ -40,18 +40,18 @@ public class UserService implements IUserService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findByLoginUser(username);
+        User user = findByLogin(username);
         return new MyUserDetails(user);
     }
 
     @Override
-    public User findByLoginUser(String login) {
+    public User findByLogin(String login) {
         return userRepository.findByLogin(login)
                 .orElseThrow(() -> new UsernameNotFoundException("user not found"));
     }
 
     @Override
-    public UserDTO findByLogin(String login) {
+    public UserDTO findByLoginDTO(String login) {
         return mapToDTO(userRepository.findByLogin(login)
                 .orElseThrow(() -> new UsernameNotFoundException("user not found")));
     }
@@ -64,12 +64,12 @@ public class UserService implements IUserService, UserDetailsService {
     }
 
     @Override
-    public UserDTO findById(Long id) {
-        return mapToDTO(findByIdUser(id));
+    public UserDTO findByIdDTO(Long id) {
+        return mapToDTO(findById(id));
     }
 
     @Override
-    public User findByIdUser(Long id) {
+    public User findById(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) {
             throw new NoSuchHippoException("There is no user with ID = " + id + "in database");
@@ -79,7 +79,7 @@ public class UserService implements IUserService, UserDetailsService {
 
     @Override
     public void delete(Long id) {
-        Long userTemp = findByIdUser(id).getInfoUser().getId();
+        Long userTemp = findById(id).getInfoUser().getId();
         userRepository.deleteById(findById(id).getId());
         infoUserService.delete(userTemp);
     }
@@ -112,7 +112,7 @@ public class UserService implements IUserService, UserDetailsService {
 
     @Override
     public void updateRole(Long userId) {
-        User user = findByIdUser(userId);
+        User user = findById(userId);
         if (user.getRole().equals(Role.USER)) {
             user.setRole(Role.ADMIN);
         } else {
@@ -123,9 +123,9 @@ public class UserService implements IUserService, UserDetailsService {
 
     @Override
     public int addFavorites(Long serviceId, String username) {
-        User user = findByLoginUser(username);
+        User user = findByLogin(username);
         List<Service> serviceList = user.getFavorites();
-        Service service = serviceService.mapToEntity(serviceService.findById(serviceId));
+        Service service = serviceService.findById(serviceId);
         serviceList.add(service);
         user.setFavorites(serviceList);
         userRepository.save(user);
@@ -134,9 +134,9 @@ public class UserService implements IUserService, UserDetailsService {
 
     @Override
     public int delFavorites(Long serviceId, String username) {
-        User user = findByLoginUser(username);
+        User user = findByLogin(username);
         List<Service> serviceList = user.getFavorites();
-        serviceList.remove(serviceService.mapToEntity(serviceService.findById(serviceId)));
+        serviceList.remove(serviceService.findById(serviceId));
         user.setFavorites(serviceList);
         userRepository.save(user);
         return user.getFavorites().size();
@@ -144,17 +144,13 @@ public class UserService implements IUserService, UserDetailsService {
 
     @Override
     public List<ServiceDTO> viewFavorites(String username) {
-        User user = findByLoginUser(username);
-        List<ServiceDTO> serviceDTOS = new ArrayList<>();
-        for (Service service : user.getFavorites()) {
-            serviceDTOS.add(serviceService.mapToDTO(service));
-        }
-        return serviceDTOS;
+        User user = findByLogin(username);
+        return serviceService.mapListToDTO(user.getFavorites());
     }
 
     @Override
     public void updateBlock(Long userId) {
-        User user = findByIdUser(userId);
+        User user = findById(userId);
         if (user.getEnabled() == 0) {
             user.setEnabled(1);
         } else {
@@ -172,7 +168,7 @@ public class UserService implements IUserService, UserDetailsService {
         userDTO.setBalance(entity.getBalance());
         userDTO.setInfoUserId(entity.getInfoUser().getId());
 //        userDTO.setOrders(entity.getOrders());
-        userDTO.setFavorites(entity.getFavorites());
+        userDTO.setFavorites(serviceService.mapListToDTO(entity.getFavorites()));
         if (entity.getEnabled() == 0) {
             userDTO.setEnabled("Блокировано");
         } else {
@@ -188,14 +184,28 @@ public class UserService implements IUserService, UserDetailsService {
         user.setLogin(dto.getLogin());
         user.setRole(dto.getRole());
         user.setBalance(dto.getBalance());
-        user.setInfoUser(infoUserService.findByIdInfo(dto.getInfoUserId()));
+        user.setInfoUser(infoUserService.findById(dto.getInfoUserId()));
 //        user.setOrders(dto.getOrders());
-        user.setFavorites(dto.getFavorites());
+        user.setFavorites(serviceService.mapListToEntity(dto.getFavorites()));
         if (Objects.equals(dto.getEnabled(), "Блокировано")) {
             user.setEnabled(0);
         } else {
             user.setEnabled(1);
         }
         return user;
+    }
+
+    @Override
+    public List<UserDTO> mapListToDTO(List<User> list) {
+        return list.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<User> mapListToEntity(List<UserDTO> dto) {
+        return dto.stream()
+                .map(this::mapToEntity)
+                .collect(Collectors.toList());
     }
 }

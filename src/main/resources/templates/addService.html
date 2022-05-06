@@ -16,19 +16,19 @@
     <input type="hidden" th:field="*{id}"/>
     <br/>
     <p>Название :
-        <input type="text" th:field="*{title}"/>
+        <input type="text" th:field="*{aboutService.title}"/>
         <br/>
 
     <p>Описание :
-        <input type="text" th:field="*{description}"/>
+        <input type="text" th:field="*{aboutService.description}"/>
         <br/>
 
     <p>Цена :
-        <input type="text" th:field="*{cost}"/>
+        <input type="text" th:field="*{aboutService.cost}"/>
         <br/>
 
     <p>Место :
-        <select name="place" th:field="*{place}">
+        <select name="place" th:field="*{aboutService.place}">
             <option th:each="place : ${T(by.university.hippo.entity.enums.Place).values()}"
                     th:value="${place}" th:text="${place.value}">
             </option>

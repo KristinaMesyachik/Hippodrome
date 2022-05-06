@@ -1,6 +1,5 @@
 package by.university.hippo.DTO;
 
-import by.university.hippo.entity.Service;
 import by.university.hippo.entity.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +17,6 @@ public class OrderDTO {
     private LocalDateTime time;
     private double amount;
     private double amountWithSale;
-//    private List<Service> services;
+    private List<ServiceDTO> services;
     private long userId;
 }

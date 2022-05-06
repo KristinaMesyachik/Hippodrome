@@ -5,5 +5,7 @@ import by.university.hippo.entity.Horse;
 import by.university.hippo.service.IService;
 
 public interface IHorseService extends IService<Horse, Long, HorseDTO> {
-    void save(HorseDTO entity);
+    void save(HorseDTO dto);
+
+    void save(Horse entity);
 }

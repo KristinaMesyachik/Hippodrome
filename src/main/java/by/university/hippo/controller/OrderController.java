@@ -50,7 +50,7 @@ public class OrderController {
     @RequestMapping(value = {"/addOrder"}, method = RequestMethod.GET)
     public String addOrderPage(HttpSession session) {
         String username = (String) session.getAttribute("username");
-        UserDTO user = userService.findByLogin(username);
+        UserDTO user = userService.findByLoginDTO(username);
         orderService.beforeSave(ServiceController.basket, username);
         session.setAttribute("basket", ServiceController.basket.size());
         double balanceDiscount = discount.multiply(BigDecimal.valueOf(user.getBalance())).doubleValue();
@@ -59,10 +59,22 @@ public class OrderController {
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
+    @RequestMapping(value = {"/print"}, method = RequestMethod.GET)
+    public String printOrder(HttpSession session) {//TODO
+        return "redirect:/api/orders";
+    }
+
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @RequestMapping(value = {"/sendMail"}, method = RequestMethod.GET)
+    public String sendMailOrder(HttpSession session) {//TODO
+        return "redirect:/api/orders";
+    }
+
+    @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/updateDiscount"}, method = RequestMethod.GET)
     public String updateDiscount(HttpSession session) {
         String username = (String) session.getAttribute("username");
-        UserDTO user = userService.findByLogin(username);
+        UserDTO user = userService.findByLoginDTO(username);
         double balanceDiscount = discount.multiply(BigDecimal.valueOf(user.getBalance())).doubleValue();
         session.setAttribute("balanceDiscount", balanceDiscount);
         return "redirect:/api/orders/";

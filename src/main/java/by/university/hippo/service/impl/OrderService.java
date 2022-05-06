@@ -2,6 +2,7 @@ package by.university.hippo.service.impl;
 
 import by.university.hippo.DTO.OrderDTO;
 import by.university.hippo.controller.ServiceController;
+import by.university.hippo.entity.AboutService;
 import by.university.hippo.entity.Order;
 import by.university.hippo.entity.Service;
 import by.university.hippo.entity.User;
@@ -31,6 +32,9 @@ public class OrderService implements IOrderService {
     private ServiceService serviceService;
 
     @Autowired
+    private AboutServiceService aboutServiceService;
+
+    @Autowired
     private UserService userService;
 
     @Override
@@ -41,32 +45,32 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public OrderDTO findById(Long id) {
+    public OrderDTO findByIdDTO(Long id) {
+        return mapToDTO(findById(id));
+    }
+
+    @Override
+    public Order findById(Long id) {
         Optional<Order> orderOptional = orderRepository.findById(id);
         if (orderOptional.isEmpty()) {
             throw new NoSuchHippoException("There is no order with ID = " + id + "in database");
         }
-        return mapToDTO(orderOptional.get());
+        return orderOptional.get();
     }
 
     @Override
     public List<OrderDTO> findByUsername(String username) {
-        List<Order> orders = orderRepository.findByUserId(userService.findByLogin(username).getId());
-        List<OrderDTO> orderDTOS = new ArrayList<>();
-        for (Order order : orders) {
-            orderDTOS.add(mapToDTO(order));
-        }
-        return orderDTOS;
+        return mapListToDTO(orderRepository.findByUserId(userService.findByLoginDTO(username).getId()));
     }
 
     @Override
     public void delete(Long id) {
-//TODO
+        orderRepository.deleteById(id);
     }
 
     @Override
     public void updateStatus(Long orderId) {
-        OrderDTO order = findById(orderId);
+        Order order = findById(orderId);
         if (order.getStatus().equals(Status.IN_PROGRESS)) {
             order.setStatus(Status.READY);
         } else {
@@ -87,7 +91,7 @@ public class OrderService implements IOrderService {
 
     @Override
     public void beforeSave(List<Long> basket, String username) {
-        User user = userService.findByLoginUser(username);
+        User user = userService.findByLogin(username);
         double balanceDiscount = BigDecimal.valueOf(100)
                 .subtract(discount.multiply(BigDecimal.valueOf(user.getBalance())))
                 .divide(BigDecimal.valueOf(100))
@@ -96,8 +100,9 @@ public class OrderService implements IOrderService {
         List<Service> services = new ArrayList<>();
         double cost = 0;
         for (Long i : basket) {
-            Service service = serviceService.mapToEntity(serviceService.findById(i));
-            cost += service.getCost();
+            Service service = serviceService.findById(i);
+            AboutService aboutService = aboutServiceService.findById(service.getAboutServiceId());
+            cost += aboutService.getCost();
             services.add(service);
         }
         order.setServices(services);
@@ -120,7 +125,7 @@ public class OrderService implements IOrderService {
         orderDTO.setTime(entity.getTime());
         orderDTO.setAmount(entity.getAmount());
         orderDTO.setAmountWithSale(entity.getAmountWithSale());
-//        orderDTO.setServices(entity.getServices());
+        orderDTO.setServices(serviceService.mapListToDTO(entity.getServices()));
         orderDTO.setUserId(entity.getUserId());
         return orderDTO;
     }
@@ -133,8 +138,22 @@ public class OrderService implements IOrderService {
         order.setTime(dto.getTime());
         order.setAmount(dto.getAmount());
         order.setAmountWithSale(dto.getAmountWithSale());
-//        order.setServices(dto.getServices());
+        order.setServices(serviceService.mapListToEntity(dto.getServices()));
         order.setUserId(dto.getUserId());
         return order;
+    }
+
+    @Override
+    public List<OrderDTO> mapListToDTO(List<Order> list) {
+        return list.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Order> mapListToEntity(List<OrderDTO> dto) {
+        return dto.stream()
+                .map(this::mapToEntity)
+                .collect(Collectors.toList());
     }
 }

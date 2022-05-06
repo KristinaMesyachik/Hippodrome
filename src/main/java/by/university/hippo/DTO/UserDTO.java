@@ -1,8 +1,5 @@
 package by.university.hippo.DTO;
 
-import by.university.hippo.entity.InfoUser;
-import by.university.hippo.entity.Order;
-import by.university.hippo.entity.Service;
 import by.university.hippo.entity.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,7 +17,7 @@ public class UserDTO {
     private double balance;
     private String enabled;
     private Long infoUserId;
-//    private InfoUser infoUser;
-//    private List<Order> orders;
-    private List<Service> favorites;
+//    private InfoUserDTO infoUser;
+//    private List<OrderDTO> orders;
+    private List<ServiceDTO> favorites;
 }

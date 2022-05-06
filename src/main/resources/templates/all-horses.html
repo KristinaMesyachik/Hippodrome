@@ -21,10 +21,9 @@
         <tr>
             <th>Кличка</th>
             <th>Порода</th>
-            <th>Гендер</th>
+            <th>Пол</th>
             <th>Возраст</th>
-            <th>Рост</th>
-            <th>Вес</th>
+            <th>Описание</th>
             <th>Рейтинг</th>
             <th>Активность</th>
 
@@ -34,8 +33,7 @@
             <td th:utext="${horse.breed}">...</td>
             <td th:utext="${horse.gender.value}">...</td>
             <td th:utext="${horse.age}">...</td>
-            <td th:utext="${horse.height}">...</td>
-            <td th:utext="${horse.weight}">...</td>
+            <td th:utext="${horse.description}">...</td>
             <td th:utext="${horse.rating}">...</td>
             <td th:utext="${horse.enabled}">...</td>
 

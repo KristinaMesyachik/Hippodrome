@@ -7,9 +7,12 @@ import by.university.hippo.service.IService;
 import java.util.List;
 
 public interface IServiceService extends IService<Service, Long, ServiceDTO> {
+
     List<ServiceDTO> findByEnabledIs();
 
-    void save(ServiceDTO entity);
+    void save(ServiceDTO dto);
+
+    void save(Service entity);
 
     List<Long> addFromBasket(Long id, List<Long> basket);
 

@@ -31,12 +31,12 @@ public class CardService implements ICardService {
     }
 
     @Override
-    public CardDTO findById(Long id) {
-        return mapToDTO(findByIdCard(id));
+    public CardDTO findByIdDTO(Long id) {
+        return mapToDTO(findById(id));
     }
 
     @Override
-    public Card findByIdCard(Long id) {
+    public Card findById(Long id) {
         Optional<Card> cardOptional = cardRepository.findById(id);
         if (cardOptional.isEmpty()) {
             throw new NoSuchHippoException("There is no card with ID = " + id + "in database");
@@ -46,7 +46,7 @@ public class CardService implements ICardService {
 
     @Override
     public void delete(Long id) {
-        Card card = findByIdCard(id);
+        Card card = findById(id);
         if (card.getEnabled() == 1) {
             card.setEnabled(0);
         } else {
@@ -57,7 +57,7 @@ public class CardService implements ICardService {
 
     @Override
     public void save(CardDTO entity, String username) {
-        User user = userService.findByLoginUser(username);
+        User user = userService.findByLogin(username);
         entity.setUserId(user.getId());
         cardRepository.save(mapToEntity(entity));
     }
@@ -67,7 +67,6 @@ public class CardService implements ICardService {
         CardDTO cardDTO = new CardDTO();
         cardDTO.setId(entity.getId());
         cardDTO.setNumber(entity.getNumber());
-        cardDTO.setBalance(entity.getBalance());
         cardDTO.setUserId(entity.getUserId());
         if (entity.getEnabled() == 0) {
             cardDTO.setEnabled("Блокировано");
@@ -82,7 +81,6 @@ public class CardService implements ICardService {
         Card card = new Card();
         card.setId(dto.getId());
         card.setNumber(dto.getNumber());
-        card.setBalance(dto.getBalance());
         card.setUserId(dto.getUserId());
         if (Objects.equals(dto.getEnabled(), "Блокировано")) {
             card.setEnabled(0);
@@ -90,5 +88,19 @@ public class CardService implements ICardService {
             card.setEnabled(1);
         }
         return card;
+    }
+
+    @Override
+    public List<CardDTO> mapListToDTO(List<Card> list) {
+        return list.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Card> mapListToEntity(List<CardDTO> dto) {
+        return dto.stream()
+                .map(this::mapToEntity)
+                .collect(Collectors.toList());
     }
 }

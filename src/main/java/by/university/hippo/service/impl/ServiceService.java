@@ -4,7 +4,10 @@ import by.university.hippo.DTO.ServiceDTO;
 import by.university.hippo.entity.Service;
 import by.university.hippo.exception.NoSuchHippoException;
 import by.university.hippo.repository.IServiceRepository;
+import by.university.hippo.service.interfaces.IAboutServiceService;
+import by.university.hippo.service.interfaces.IHorseService;
 import by.university.hippo.service.interfaces.IServiceService;
+import by.university.hippo.service.interfaces.IStaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
@@ -21,6 +24,15 @@ public class ServiceService implements IServiceService {
     @Autowired
     private IServiceRepository serviceRepository;
 
+    @Autowired
+    private IHorseService horseService;
+
+    @Autowired
+    private IStaffService staffService;
+
+    @Autowired
+    private IAboutServiceService aboutServiceService;
+
     @Override
     public List<ServiceDTO> findAll() {
         return serviceRepository.findAll().stream()
@@ -29,12 +41,17 @@ public class ServiceService implements IServiceService {
     }
 
     @Override
-    public ServiceDTO findById(Long id) {
+    public Service findById(Long id) {
         Optional<Service> serviceOptional = serviceRepository.findById(id);
         if (serviceOptional.isEmpty()) {
             throw new NoSuchHippoException("There is no service with ID = " + id + "in database");
         }
-        return mapToDTO(serviceOptional.get());
+        return serviceOptional.get();
+    }
+
+    @Override
+    public ServiceDTO findByIdDTO(Long id) {
+        return mapToDTO(findById(id));
     }
 
     @Override
@@ -47,18 +64,23 @@ public class ServiceService implements IServiceService {
 
     @Override
     public void delete(Long id) {
-        ServiceDTO service = findById(id);
-        if (Objects.equals(service.getEnabled(), "Блокировано")) {
-            service.setEnabled("Активно");
+        Service service = findById(id);
+        if (service.getEnabled() == 0) {
+            service.setEnabled(1);
         } else {
-            service.setEnabled("Блокировано");
+            service.setEnabled(0);
         }
         save(service);
-    }//TODO del check
+    }
 
     @Override
-    public void save(ServiceDTO entity) {
-        serviceRepository.save(mapToEntity(entity));
+    public void save(ServiceDTO dto) {
+        save(mapToEntity(dto));
+    }
+
+    @Override
+    public void save(Service entity) {
+        serviceRepository.save(entity);
     }
 
     @Override
@@ -74,11 +96,10 @@ public class ServiceService implements IServiceService {
     }
 
     @Override
-    @Transactional
     public List<ServiceDTO> viewBasket(List<Long> basket) {
         List<ServiceDTO> services = new ArrayList<>();
         for (Long i : basket) {
-            services.add(findById(i));
+            services.add(findByIdDTO(i));
         }
         return services;
     }
@@ -87,10 +108,8 @@ public class ServiceService implements IServiceService {
     public ServiceDTO mapToDTO(Service entity) {
         ServiceDTO serviceDTO = new ServiceDTO();
         serviceDTO.setId(entity.getId());
-        serviceDTO.setTitle(entity.getTitle());
-        serviceDTO.setDescription(entity.getDescription());
-        serviceDTO.setCost(entity.getCost());
         serviceDTO.setPlace(entity.getPlace());
+        serviceDTO.setAboutService(aboutServiceService.findByIdDTO(entity.getAboutServiceId()));
         if (entity.getEnabled() == 0) {
             serviceDTO.setEnabled("Блокировано");
         } else {
@@ -98,27 +117,39 @@ public class ServiceService implements IServiceService {
         }
         serviceDTO.setTime(entity.getTime().toLocalTime().toString());
         serviceDTO.setDate(entity.getTime().toLocalDate().toString());
-//        serviceDTO.setHorses(entity.getHorses());
-//        serviceDTO.setStaff(entity.getStaff());
+        serviceDTO.setHorses(horseService.mapListToDTO(entity.getHorses()));
+        serviceDTO.setStaff(staffService.mapListToDTO(entity.getStaff()));
         return serviceDTO;
+    }
+
+    @Override
+    public List<ServiceDTO> mapListToDTO(List<Service> list) {
+        return list.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Service> mapListToEntity(List<ServiceDTO> dto) {
+        return dto.stream()
+                .map(this::mapToEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
     public Service mapToEntity(ServiceDTO dto) {
         Service service = new Service();
         service.setId(dto.getId());
-        service.setTitle(dto.getTitle());
-        service.setDescription(dto.getDescription());
-        service.setCost(dto.getCost());
         service.setPlace(dto.getPlace());
         if (Objects.equals(dto.getEnabled(), "Блокировано")) {
             service.setEnabled(0);
         } else {
             service.setEnabled(1);
         }
+        service.setAboutServiceId(dto.getAboutService().getId());
         service.setTime(LocalDateTime.parse(dto.getDate() + "T" + dto.getTime()));//TODO
-//        service.setHorses(dto.getHorses());
-//        service.setStaff(dto.getStaff());
+        service.setHorses(horseService.mapListToEntity(dto.getHorses()));
+        service.setStaff(staffService.mapListToEntity(dto.getStaff()));
         return service;
     }
 }

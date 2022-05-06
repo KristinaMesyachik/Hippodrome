@@ -26,12 +26,12 @@ public class InfoUserService implements IInfoUserService {
     }
 
     @Override
-    public InfoUserDTO findById(Long id) {
-        return mapToDTO(findByIdInfo(id));
+    public InfoUserDTO findByIdDTO(Long id) {
+        return mapToDTO(findById(id));
     }
 
     @Override
-    public InfoUser findByIdInfo(Long id) {
+    public InfoUser findById(Long id) {
         Optional<InfoUser> infoUserOptional = infoUserRepository.findById(id);
         if (infoUserOptional.isEmpty()) {
             throw new NoSuchHippoException("There is no info with ID = " + id + "in database");
@@ -71,5 +71,19 @@ public class InfoUserService implements IInfoUserService {
         infoUser.setPhone(dto.getPhone());
         infoUser.setMail(dto.getMail());
         return infoUser;
+    }
+
+    @Override
+    public List<InfoUserDTO> mapListToDTO(List<InfoUser> list) {
+        return list.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<InfoUser> mapListToEntity(List<InfoUserDTO> dto) {
+        return dto.stream()
+                .map(this::mapToEntity)
+                .collect(Collectors.toList());
     }
 }

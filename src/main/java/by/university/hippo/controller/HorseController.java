@@ -45,7 +45,7 @@ public class HorseController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/update"}, method = RequestMethod.GET)
     public String update(@RequestParam(name = "horseId") Long horseId, Model model) {
-        HorseDTO horse = horseService.findById(horseId);
+        HorseDTO horse = horseService.findByIdDTO(horseId);
         model.addAttribute("horse", horse);
         return "addHorse";
     }

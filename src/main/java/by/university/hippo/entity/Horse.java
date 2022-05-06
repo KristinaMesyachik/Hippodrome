@@ -33,34 +33,12 @@ public class Horse implements Serializable {
     @Column(name = "age")
     private int age;
 
-    @Column(name = "height")
-    private double height;
-
-    @Column(name = "weight")
-    private double weight;
+    @Column(name = "description")
+    private String description;
 
     @Column(name = "rating")
     private double rating;
 
     @Column(name = "enabled")
     private int enabled;
-
-    public Horse(String nickname,
-                 String breed,
-                 Gender gender,
-                 int age,
-                 double height,
-                 double weight,
-                 double rating,
-                 int enabled
-    ) {
-        this.nickname = nickname;
-        this.breed = breed;
-        this.gender = gender;
-        this.age = age;
-        this.height = height;
-        this.weight = weight;
-        this.rating = rating;
-        this.enabled = enabled;
-    }
 }

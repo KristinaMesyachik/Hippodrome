@@ -22,9 +22,6 @@ public class Card implements Serializable {
     @Column(name = "number")
     private String number;
 
-    @Column(name = "balance")
-    private double balance;
-
     @Column(name = "user_id")
     private long userId;
 

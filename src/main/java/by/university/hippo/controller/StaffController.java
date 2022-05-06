@@ -46,7 +46,7 @@ public class StaffController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/update"}, method = RequestMethod.GET)
     public String update(@RequestParam(name = "staffId") Long staffId, Model model) {
-        StaffDTO staff = staffService.findById(staffId);
+        StaffDTO staff = staffService.findByIdDTO(staffId);
         model.addAttribute("staff", staff);
         return "addStaff";
     }

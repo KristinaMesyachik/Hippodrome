@@ -1,5 +1,6 @@
 package by.university.hippo.controller;
 
+import by.university.hippo.DTO.InfoUserDTO;
 import by.university.hippo.DTO.ServiceDTO;
 import by.university.hippo.DTO.UserDTO;
 import by.university.hippo.service.impl.ServiceService;
@@ -41,8 +42,17 @@ public class ServiceController {
     @RequestMapping(value = {"/"}, method = RequestMethod.GET)
     public String findAllUser(Model model) {
         List<ServiceDTO> services = serviceService.findByEnabledIs();
+        System.err.println(services);
         model.addAttribute("services", services);
         return "all-services";
+    }
+
+//    @PreAuthorize("hasRole('ROLE')")
+    @RequestMapping(value = {"/about"}, method = RequestMethod.GET)
+    public String viewAllService(Model model, @RequestParam Long serviceId) {
+        ServiceDTO serviceDTO = serviceService.findByIdDTO(serviceId);
+        model.addAttribute("service", serviceDTO);
+        return "about-user";
     }
 
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
@@ -50,10 +60,12 @@ public class ServiceController {
     public String afterRegistration(HttpSession session) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        UserDTO user = userService.findByLogin(username);
+        UserDTO user = userService.findByLoginDTO(username);
         double balanceDiscount = discount.multiply(BigDecimal.valueOf(user.getBalance())).doubleValue();
         session.setAttribute("balanceDiscount", balanceDiscount);
         session.setAttribute("username", username);
+        System.err.println(user);
+        System.err.println(userService.findByLogin(username));
         session.setAttribute("basket", basket.size());
         session.setAttribute("favorite", user.getFavorites().size());
         return "redirect:/api/services/";
@@ -78,7 +90,7 @@ public class ServiceController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/update"}, method = RequestMethod.GET)
     public String update(@RequestParam(name = "serviceId") Long serviceId, Model model) {
-        ServiceDTO service = serviceService.findById(serviceId);
+        ServiceDTO service = serviceService.findByIdDTO(serviceId);
         model.addAttribute("service", service);
         return "addService";
     }

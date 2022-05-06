@@ -17,17 +17,18 @@
         <th>Стоимость</th>
         <th>Место</th>
         <th>Время</th>
-
+        <th>Дата</th>
         <div th:if="basket">
             <th>Действие</th>
         </div>
     </tr>
     <tr th:each="service : ${services}">
-        <td th:utext="${service.title}">...</td>
-        <td th:utext="${service.description}">...</td>
-        <td th:utext="${service.cost}">...</td>
-        <td th:utext="${service.place}">...</td>
+        <td th:utext="${service.aboutService.title}">...</td>
+        <td th:utext="${service.aboutService.description}">...</td>
+        <td th:utext="${service.aboutService.cost}">...</td>
+        <td th:utext="${service.aboutService.place}">...</td>
         <td th:utext="${service.time}">...</td>
+        <td th:utext="${service.date}">...</td>
         <td>
             <form th:action="@{/api/services/deleteFromBasket}" method="get">
                 <input type="hidden" th:name="serviceId" th:value="${service.id}"/>

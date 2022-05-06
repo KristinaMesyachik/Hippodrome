@@ -10,11 +10,9 @@ import java.util.List;
 
 public interface IUserService extends IService<User, Long, UserDTO> {
 
-    User findByLoginUser(String login);
+    User findByLogin(String login);
 
-    UserDTO findByLogin(String login);
-
-    User findByIdUser(Long id);
+    UserDTO findByLoginDTO(String login);
 
     void save(UserAddDTO entity);
 

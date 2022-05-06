@@ -46,7 +46,7 @@ public class CardController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/update"}, method = RequestMethod.GET)
     public String update(@RequestParam(name = "cardId") Long cardId, Model model) {
-        CardDTO card = cardService.findById(cardId);
+        CardDTO card = cardService.findByIdDTO(cardId);
         model.addAttribute("card", card);
         return "addCard";
     }

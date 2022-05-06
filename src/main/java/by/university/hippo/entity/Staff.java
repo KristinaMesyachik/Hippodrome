@@ -41,20 +41,4 @@ public class Staff implements Serializable {
 
     @Column(name = "enabled")
     private int enabled;
-
-    public Staff(String firstname,
-                 String lastname,
-                 String middlename,
-                 String phone,
-                 String mail,
-                 Department department,
-                 int enabled) {
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.middlename = middlename;
-        this.phone = phone;
-        this.mail = mail;
-        this.department = department;
-        this.enabled = enabled;
-    }
 }

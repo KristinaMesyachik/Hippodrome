@@ -22,21 +22,15 @@ public class Service implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title")
-    private String title;
+    @Column(name = "about_service_id")
+    private Long aboutServiceId;
 
-    @Column(name = "description")
-    private String description;
-
-    @Column(name = "cost")
-    private double cost;
+    @Column(name = "time")
+    private LocalDateTime time;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "place")
     private Place place;
-
-    @Column(name = "time")
-    private LocalDateTime time;
 
     @ManyToMany(cascade = CascadeType.MERGE,
             fetch = FetchType.LAZY

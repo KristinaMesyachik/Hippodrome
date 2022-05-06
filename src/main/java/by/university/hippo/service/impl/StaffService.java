@@ -26,28 +26,39 @@ public class StaffService implements IStaffService {
     }
 
     @Override
-    public StaffDTO findById(Long id) {
+    public Staff findById(Long id) {
         Optional<Staff> staffOptional = staffRepository.findById(id);
         if (staffOptional.isEmpty()) {
             throw new NoSuchHippoException("There is no employee with ID = " + id + "in database");
         }
-        return mapToDTO(staffOptional.get());
+        return staffOptional.get();
+    }
+
+    @Override
+    public StaffDTO findByIdDTO(Long id) {
+        return mapToDTO(findById(id));
+
     }
 
     @Override
     public void delete(Long id) {
-        StaffDTO staff = findById(id);
-        if (Objects.equals(staff.getEnabled(), "Блокировано")) {
-            staff.setEnabled("Активно");
+        Staff staff = findById(id);
+        if (staff.getEnabled() == 0) {
+            staff.setEnabled(1);
         } else {
-            staff.setEnabled("Блокировано");
+            staff.setEnabled(0);
         }
         save(staff);
     }
 
     @Override
-    public void save(StaffDTO entity) {
-        staffRepository.save(mapToEntity(entity));
+    public void save(Staff entity) {
+        staffRepository.save(entity);
+    }
+
+    @Override
+    public void save(StaffDTO dto) {
+        save(mapToEntity(dto));
     }
 
     @Override
@@ -84,5 +95,18 @@ public class StaffService implements IStaffService {
             staff.setEnabled(1);
         }
         return staff;
+    }
+
+    @Override
+    public List<StaffDTO> mapListToDTO(List<Staff> list) {
+        return list.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());    }
+
+    @Override
+    public List<Staff> mapListToEntity(List<StaffDTO> dto) {
+        return dto.stream()
+                .map(this::mapToEntity)
+                .collect(Collectors.toList());
     }
 }

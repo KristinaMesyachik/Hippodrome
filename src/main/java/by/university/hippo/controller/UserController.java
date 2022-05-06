@@ -36,8 +36,8 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/info"}, method = RequestMethod.GET)
     public String viewPeople(Model model, @RequestParam Long userId) {
-        UserDTO user = userService.findById(userId);
-        InfoUserDTO infoUserDTO = infoUserService.findById(user.getInfoUserId());
+        UserDTO user = userService.findByIdDTO(userId);
+        InfoUserDTO infoUserDTO = infoUserService.findByIdDTO(user.getInfoUserId());
         model.addAttribute("info", infoUserDTO);
         model.addAttribute("user", user);
         return "about-user";
@@ -71,7 +71,7 @@ public class UserController {
         return "addUser";
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+//    @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
     public String save(@ModelAttribute(name = "user") UserAddDTO user) {
             userService.save(user);
