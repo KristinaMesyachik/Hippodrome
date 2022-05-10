@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,20 +45,15 @@ public class CardService implements ICardService {
 
     @Override
     public void delete(Long id) {
-        Card card = findById(id);
-        if (card.getEnabled() == 1) {
-            card.setEnabled(0);
-        } else {
-            card.setEnabled(1);
-        }
-        cardRepository.save(card);
+        cardRepository.deleteById(id);
     }
 
     @Override
     public void save(CardDTO entity, String username) {
         User user = userService.findByLogin(username);
-        entity.setUserId(user.getId());
-        cardRepository.save(mapToEntity(entity));
+        Card card = mapToEntity(entity);
+        cardRepository.save(card);
+        user.setCard(card);
     }
 
     @Override
@@ -67,12 +61,6 @@ public class CardService implements ICardService {
         CardDTO cardDTO = new CardDTO();
         cardDTO.setId(entity.getId());
         cardDTO.setNumber(entity.getNumber());
-        cardDTO.setUserId(entity.getUserId());
-        if (entity.getEnabled() == 0) {
-            cardDTO.setEnabled("Блокировано");
-        } else {
-            cardDTO.setEnabled("Активно");
-        }
         return cardDTO;
     }
 
@@ -81,12 +69,6 @@ public class CardService implements ICardService {
         Card card = new Card();
         card.setId(dto.getId());
         card.setNumber(dto.getNumber());
-        card.setUserId(dto.getUserId());
-        if (Objects.equals(dto.getEnabled(), "Блокировано")) {
-            card.setEnabled(0);
-        } else {
-            card.setEnabled(1);
-        }
         return card;
     }
 

@@ -4,7 +4,7 @@
     <table border="1" width="100%">
         <tr>
             <th><a href="/"><h3>Главная</h3></a></th>
-            <th><a href="/api/services/"><h3>Меню услуг</h3></a></th>
+            <th><a href="/api/priceLists/"><h3>Меню услуг</h3></a></th>
 
             <div sec:authorize="isAnonymous()">
                 <a href="/api/users/addUser/"><h3>Регистрация</h3></a>
@@ -13,17 +13,17 @@
 
             <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
                 <th><a href="/api/users/"><h3>Пользователи</h3></a></th>
-                <th><a href="/api/horses/"><h3>Лошади</h3></a></th>
                 <th><a href="/api/staff/"><h3>Сотрудники</h3></a></th>
                 <th><a href="/api/orders/admin/"><h3>Заказы</h3></a></th>
             </div>
         </tr>
         <tr>
             <div sec:authorize="isAuthenticated()">
-                <form th:action="@{/api/services/before-logout}" method="get">
+                <form th:action="@{/api/priceLists/before-logout}" method="get">
                     <input type="submit" value="Выйти"/>
                 </form>
                 <p align="right">Добро пожаловать, <span sec:authentication="name"></span></p>
+                <th><a href="/api/horses/"><h3>Лошади</h3></a></th>
             </div>
 
             <div th:if="${#authorization.expression('hasRole(''USER'')')}">

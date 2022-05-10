@@ -1,7 +1,9 @@
 package by.university.hippo.controller;
 
 import by.university.hippo.DTO.CardDTO;
+import by.university.hippo.DTO.UserDTO;
 import by.university.hippo.service.impl.CardService;
+import by.university.hippo.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -18,11 +20,24 @@ public class CardController {
     @Autowired
     private CardService cardService;
 
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = {"/"}, method = RequestMethod.GET)
-    public String findAllUser(Model model) {
+    @Autowired
+    private UserService userService;
+
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = {"/admin"}, method = RequestMethod.GET)
+    public String findAll(Model model) {
         List<CardDTO> cards = cardService.findAll();
         model.addAttribute("cards", cards);
+        return "all-cards";
+    }
+
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @RequestMapping(value = {"/"}, method = RequestMethod.GET)
+    public String findAllUser(Model model, HttpSession session) {
+        String username = (String) session.getAttribute("username");
+        UserDTO user = userService.findByLoginDTO(username);
+        model.addAttribute("cards", user.getCard());
         return "all-cards";
     }
 

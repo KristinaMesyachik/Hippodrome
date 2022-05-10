@@ -53,6 +53,13 @@ public class HorseService implements IHorseService {
     }
 
     @Override
+    public List<HorseDTO> findByEnabledIs() {
+        return horseRepository.findByEnabledIs(1).stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void save(HorseDTO dto) {
         save(mapToEntity(dto));
     }

@@ -13,10 +13,4 @@ public interface IServiceService extends IService<Service, Long, ServiceDTO> {
     void save(ServiceDTO dto);
 
     void save(Service entity);
-
-    List<Long> addFromBasket(Long id, List<Long> basket);
-
-    List<Long> deleteFromBasket(Long id, List<Long> basket);
-
-    List<ServiceDTO> viewBasket(List<Long> basket);
 }

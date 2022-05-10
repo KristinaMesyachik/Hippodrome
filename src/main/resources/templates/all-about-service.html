@@ -1,99 +1,63 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
->
 <head>
     <meta charset="UTF-8">
-    <title></title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <title>Title</title>
 </head>
 <body>
-<th:block th:include="/_title"></th:block>
+<th:block th:include="/_title">
+
+</th:block>
 
 <br><br><br>
-<div>
-    <table border="1" width="100%">
-        <caption>Информация об услуге</caption>
-        <tr>
-            <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-                <th>id</th>
-                <th>Жизнь</th>
-            </div>
-            <th>Название</th>
-            <th>Описание</th>
-            <th>Стоимость</th>
-            <th>Место</th>
-            <th>Дата</th>
-            <th>Время</th>
-        </tr>
-        <tr th:each="service : ${services}">
-            <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-                <td th:utext="${service.id}">...</td>
-                <td th:utext="${service.enabled}">...</td>
-            </div>
-            <td th:utext="${service.aboutService.title}">...</td>
-            <td th:utext="${service.aboutService.description}">...</td>
-            <td th:utext="${service.aboutService.cost}">...</td>
-            <td th:utext="${service.aboutService.place.value}">...</td>
-            <td th:utext="${service.date}">...</td>
-            <td th:utext="${service.time}">...</td>
-
-        </tr>
-    </table>
-
-    <form th:action="@{/api/services/about/}" method="get">
-        <input type="hidden" th:name="serviceId" th:value="${service.id}">
-        <input type="submit" value="Подробнее"/>
-    </form>
-
-    <div th:if="${#authorization.expression('hasRole(''USER'')')}">
-        <form th:action="@{/api/services/addBasket/}" method="get">
-            <input type="hidden" th:name="serviceId" th:value="${service.id}"/>
-            <input type="submit" value="Добавить в карзину"/>
-        </form>
-        <form th:action="@{/api/users/addFavorites/}" method="get">
-            <input type="hidden" th:name="serviceId" th:value="${service.id}"/>
-            <input type="submit" value="Избрать"/>
-        </form>
-    </div>
-
-    <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-        <form th:action="@{/api/services/update/}" method="get">
-            <input type="hidden" th:name="serviceId" th:value="${service.id}">
-            <input type="submit" value="Изменить"/>
-        </form>
-        <form th:action="@{/api/services/delete/}" method="get">
-            <input type="hidden" th:name="serviceId" th:value="${service.id}"/>
-            <input type="submit" value="Блокировать"/>
-        </form>
-    </div>
-</div>
-
-
-<br><br>
-
 <table border="1" width="100%">
-    <caption>Дополнительная информация о пользователе</caption>
+    <caption>Список услуг</caption>
     <tr>
-        <th>Id</th>
-        <th>Имя</th>
-        <th>Фамилия</th>
-        <th>Отчество</th>
-        <th>Телефон</th>
-        <th>Почта</th>
+        <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+            <th>id</th>
+        </div>
+        <th>Название</th>
+        <th>Описание</th>
+        <th>Категория</th>
+        <th>Стоимость</th>
+        <th>Устарело</th>
 
     </tr>
-    <tbody>
-    <tr th:with="info = ${info}">
-        <td th:utext="${info.id}">...</td>
-        <td th:utext="${info.lastname}">...</td>
-        <td th:utext="${info.firstname}">...</td>
-        <td th:utext="${info.middlename}">...</td>
-        <td th:utext="${info.phone}">...</td>
-        <td th:utext="${info.mail}">...</td>
+    <tr th:each="aboutService : ${aboutServices}">
+        <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+            <td th:utext="${aboutService.id}">...</td>
+        </div>
+        <td th:utext="${aboutService.title}">...</td>
+        <td th:utext="${aboutService.description}">...</td>
+        <td th:utext="${aboutService.category}">...</td>
+        <td th:utext="${aboutService.cost}">...</td>
+        <td th:utext="${aboutService.enabled}">...</td>
+
+        <td>
+            <div th:if="${#authorization.expression('hasRole(''USER'')')}">
+<!--                <form th:action="@{/api/services/addBasket/}" method="get">-->
+<!--                    <input type="hidden" th:name="aboutServiceId" th:value="${aboutService.id}"/>-->
+<!--                    <input type="submit" value="Добавить в карзину"/>-->
+<!--                </form>-->
+<!--                <form th:action="@{/api/users/addFavorites/}" method="get">-->
+<!--                    <input type="hidden" th:name="aboutServiceId" th:value="${aboutService.id}"/>-->
+<!--                    <input type="submit" value="Избрать"/>-->
+<!--                </form>-->
+            </div>
+
+            <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                <form th:action="@{/api/services/update/}" method="get">
+                    <input type="hidden" th:name="aboutServiceId" th:value="${aboutService.id}">
+                    <input type="submit" value="Изменить"/>
+                </form>
+                <form th:action="@{/api/services/delete/}" method="get">
+                    <input type="hidden" th:name="aboutServiceId" th:value="${aboutService.id}"/>
+                    <input type="submit" value="Блокировать"/>
+                </form>
+            </div>
+        </td>
     </tr>
-    <tbody>
 </table>
-</div>
 </body>
 </html>

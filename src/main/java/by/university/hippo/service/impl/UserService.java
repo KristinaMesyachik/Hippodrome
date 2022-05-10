@@ -1,12 +1,9 @@
 package by.university.hippo.service.impl;
 
-import by.university.hippo.DTO.ServiceDTO;
+import by.university.hippo.DTO.PriceListDTO;
 import by.university.hippo.DTO.UserAddDTO;
 import by.university.hippo.DTO.UserDTO;
-import by.university.hippo.entity.InfoUser;
-import by.university.hippo.entity.MyUserDetails;
-import by.university.hippo.entity.Service;
-import by.university.hippo.entity.User;
+import by.university.hippo.entity.*;
 import by.university.hippo.entity.enums.Role;
 import by.university.hippo.exception.NoSuchHippoException;
 import by.university.hippo.repository.IUserRepository;
@@ -17,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,7 +32,7 @@ public class UserService implements IUserService, UserDetailsService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private ServiceService serviceService;
+    private PriceListService priceListService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -92,7 +88,6 @@ public class UserService implements IUserService, UserDetailsService {
         infoUser.setFirstname(entity.getFirstname());
         infoUser.setLastname(entity.getFirstname());
         infoUser.setMiddlename(entity.getMiddlename());
-        infoUser.setMail(entity.getMail());
         infoUser.setPhone(entity.getPhone());
         infoUserService.save(infoUser);
 
@@ -124,9 +119,9 @@ public class UserService implements IUserService, UserDetailsService {
     @Override
     public int addFavorites(Long serviceId, String username) {
         User user = findByLogin(username);
-        List<Service> serviceList = user.getFavorites();
-        Service service = serviceService.findById(serviceId);
-        serviceList.add(service);
+        List<PriceList> serviceList = user.getFavorites();
+        PriceList priceList = priceListService.findById(serviceId);
+        serviceList.add(priceList);
         user.setFavorites(serviceList);
         userRepository.save(user);
         return user.getFavorites().size();
@@ -135,17 +130,17 @@ public class UserService implements IUserService, UserDetailsService {
     @Override
     public int delFavorites(Long serviceId, String username) {
         User user = findByLogin(username);
-        List<Service> serviceList = user.getFavorites();
-        serviceList.remove(serviceService.findById(serviceId));
-        user.setFavorites(serviceList);
+        List<PriceList> priceListList = user.getFavorites();
+        priceListList.remove(priceListService.findById(serviceId));
+        user.setFavorites(priceListList);
         userRepository.save(user);
         return user.getFavorites().size();
     }
 
     @Override
-    public List<ServiceDTO> viewFavorites(String username) {
+    public List<PriceListDTO> viewFavorites(String username) {
         User user = findByLogin(username);
-        return serviceService.mapListToDTO(user.getFavorites());
+        return priceListService.mapListToDTO(user.getFavorites());
     }
 
     @Override
@@ -166,9 +161,9 @@ public class UserService implements IUserService, UserDetailsService {
         userDTO.setLogin(entity.getLogin());
         userDTO.setRole(entity.getRole());
         userDTO.setBalance(entity.getBalance());
-        userDTO.setInfoUserId(entity.getInfoUser().getId());
+        userDTO.setInfoUser(infoUserService.mapToDTO(entity.getInfoUser()));
 //        userDTO.setOrders(entity.getOrders());
-        userDTO.setFavorites(serviceService.mapListToDTO(entity.getFavorites()));
+        userDTO.setFavorites(priceListService.mapListToDTO(entity.getFavorites()));
         if (entity.getEnabled() == 0) {
             userDTO.setEnabled("Блокировано");
         } else {
@@ -184,9 +179,9 @@ public class UserService implements IUserService, UserDetailsService {
         user.setLogin(dto.getLogin());
         user.setRole(dto.getRole());
         user.setBalance(dto.getBalance());
-        user.setInfoUser(infoUserService.findById(dto.getInfoUserId()));
+        user.setInfoUser(infoUserService.mapToEntity(dto.getInfoUser()));
 //        user.setOrders(dto.getOrders());
-        user.setFavorites(serviceService.mapListToEntity(dto.getFavorites()));
+        user.setFavorites(priceListService.mapListToEntity(dto.getFavorites()));
         if (Objects.equals(dto.getEnabled(), "Блокировано")) {
             user.setEnabled(0);
         } else {

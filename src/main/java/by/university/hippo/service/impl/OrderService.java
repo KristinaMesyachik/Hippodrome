@@ -1,11 +1,8 @@
 package by.university.hippo.service.impl;
 
 import by.university.hippo.DTO.OrderDTO;
-import by.university.hippo.controller.ServiceController;
-import by.university.hippo.entity.AboutService;
-import by.university.hippo.entity.Order;
-import by.university.hippo.entity.Service;
-import by.university.hippo.entity.User;
+import by.university.hippo.DTO.ServiceDTO;
+import by.university.hippo.entity.*;
 import by.university.hippo.entity.enums.Status;
 import by.university.hippo.exception.NoSuchHippoException;
 import by.university.hippo.repository.IOrderRepository;
@@ -14,11 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static by.university.hippo.controller.ServiceController.basket;
 import static by.university.hippo.controller.ServiceController.discount;
 
 
@@ -30,9 +27,6 @@ public class OrderService implements IOrderService {
 
     @Autowired
     private ServiceService serviceService;
-
-    @Autowired
-    private AboutServiceService aboutServiceService;
 
     @Autowired
     private UserService userService;
@@ -90,31 +84,36 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public void beforeSave(List<Long> basket, String username) {
-        User user = userService.findByLogin(username);
-        double balanceDiscount = BigDecimal.valueOf(100)
-                .subtract(discount.multiply(BigDecimal.valueOf(user.getBalance())))
-                .divide(BigDecimal.valueOf(100))
-                .doubleValue();
-        Order order = new Order();
-        List<Service> services = new ArrayList<>();
-        double cost = 0;
-        for (Long i : basket) {
-            Service service = serviceService.findById(i);
-            AboutService aboutService = aboutServiceService.findById(service.getAboutServiceId());
-            cost += aboutService.getCost();
-            services.add(service);
+    public List<ServiceDTO> beforeSave(String username) {
+        List<Service> wrongService = serviceService.save(basket);
+        if (wrongService.isEmpty()) {
+            User user = userService.findByLogin(username);
+            double balanceDiscount = BigDecimal.valueOf(100)
+                    .subtract(discount.multiply(BigDecimal.valueOf(user.getBalance())))
+                    .divide(BigDecimal.valueOf(100))
+                    .doubleValue();
+            OrderDTO order = new OrderDTO();
+            double cost = 0;
+
+            List<ServiceDTO> byArgsList = serviceService.findByArgsList(basket);
+
+            for (ServiceDTO service : byArgsList) {
+                cost += service.getPriceList().getAmount();
+            }
+            order.setServices(byArgsList);
+            order.setTime(LocalDateTime.now());
+            order.setStatus(Status.IN_PROGRESS);
+            order.setAmount(cost);
+            order.setAmountWithSale(cost * balanceDiscount);
+            order.setUserId(user.getId());
+            save(order);
+            user.setBalance(user.getBalance() + cost);
+            userService.save(user);
+            basket.clear();
+            return null;
+        } else {
+            return serviceService.mapListToDTO(wrongService);
         }
-        order.setServices(services);
-        order.setTime(LocalDateTime.now());
-        order.setStatus(Status.IN_PROGRESS);
-        order.setAmount(cost);
-        order.setAmountWithSale(cost * balanceDiscount);
-        order.setUserId(user.getId());
-        save(order);
-        user.setBalance(user.getBalance() + cost);
-        userService.save(user);
-        ServiceController.basket.clear();
     }
 
     @Override

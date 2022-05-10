@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить услугу</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<th:block th:include="/_title"></th:block>
+
+<br><br>
+
+<h1>Добавление услуги:</h1>
+
+<form th:action="@{/api/about-services/save}" th:object="${aboutService}" method="POST">
+    <input type="hidden" th:field="*{id}"/>
+    <br/>
+    <p>Название :
+        <input type="text" th:field="*{aboutService.title}"/>
+        <br/>
+
+    <p>Описание :
+        <input type="text" th:field="*{aboutService.description}"/>
+        <br/>
+
+    <p>Категория :
+        <select name="category" th:field="*{aboutService.category}">
+            <option th:each="category : ${T(by.university.hippo.entity.enums.category).values()}"
+                    th:value="${category}" th:text="${category.value}">
+            </option>
+        </select>
+
+    <p>Цена :
+        <input type="text" th:field="*{aboutService.cost}"/>
+        <br/>
+</form>
+
+<br/>
+</body>
+</html>

@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HorseDTO {
-
     private Long id;
     private String nickname;
     private String breed;

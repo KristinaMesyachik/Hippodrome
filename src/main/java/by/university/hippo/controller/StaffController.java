@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @Controller
-@RequestMapping("/api/staff")
+@RequestMapping("/api/staff/admin")
 public class StaffController {
 
     @Autowired
@@ -40,7 +40,7 @@ public class StaffController {
     @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
     public String save(@ModelAttribute(name = "staff") StaffDTO staff) {
         staffService.save(staff);
-        return "redirect:/api/staff/";
+        return "redirect:/api/staff/admin/";
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -55,6 +55,6 @@ public class StaffController {
     @RequestMapping(value = {"/delete"}, method = RequestMethod.GET)
     public String delete(@RequestParam(name = "staffId") Long staffId) {
         staffService.delete(staffId);
-        return "redirect:/api/staff/";
+        return "redirect:/api/staff/admin/";
     }
 }

@@ -21,6 +21,14 @@ public class HorseController {
     private HorseService horseService;
 
     @RequestMapping(value = {"/"}, method = RequestMethod.GET)
+    public String findAllUser(Model model) {
+        List<HorseDTO> horses = horseService.findByEnabledIs();
+        model.addAttribute("horses",horses);
+        return "all-horses";
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = {"/admin"}, method = RequestMethod.GET)
     public String findAll(Model model) {
         List<HorseDTO> horses = horseService.findAll();
         model.addAttribute("horses",horses);

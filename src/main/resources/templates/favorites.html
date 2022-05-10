@@ -6,7 +6,9 @@
     <title>Title</title>
 </head>
 <body>
-<th:block th:include="/_title"></th:block>
+<th:block th:include="/_title">
+
+</th:block>
 
 <br><br><br>
 <table border="1" width="100%">
@@ -14,26 +16,32 @@
     <tr>
         <th>Название</th>
         <th>Описание</th>
+        <th>Категория</th>
         <th>Стоимость</th>
-        <th>Место</th>
-        <th>Время</th>
-        <th>Дата</th>
+        <th>Количество людей</th>
+        <th>Продолжительность</th>
+        <th>К оплате</th>
+        <th>Устарело</th>
 
     </tr>
-    <tr th:each="service : ${favorites}">
-        <td th:utext="${service.aboutService.title}">...</td>
-        <td th:utext="${service.aboutService.description}">...</td>
-        <td th:utext="${service.aboutService.cost}">...</td>
-        <td th:utext="${service.place}">...</td>
-        <td th:utext="${service.time}">...
-        <td th:utext="${service.date}">...</td>
+    <tr th:each="priceList : ${favorites}">
+        <td th:utext="${priceList.aboutService.title}">...</td>
+        <td th:utext="${priceList.aboutService.description}">...</td>
+        <td th:utext="${priceList.aboutService.category.value}">...</td>
+        <td th:utext="${priceList.aboutService.cost}">...</td>
+<!--        <td th:utext="${priceList.enabled}">...</td>-->
+        <td th:utext="${priceList.countOfPeople}">...</td>
+        <td th:utext="${priceList.duration}">...</td>
+        <td th:utext="${priceList.amount}">...</td>
+        <td th:utext="${priceList.enabled}">...</td>
+
         <td>
             <form th:action="@{/api/users/deleteFavorites}" method="get">
-                <input type="hidden" th:name="serviceId" th:value="${service.id}"/>
+                <input type="hidden" th:name="priceListId" th:value="${priceList.id}"/>
                 <input type="submit" value="Удалить"/>
             </form>
             <form th:action="@{/api/services/addBasket/}" method="get">
-                <input type="hidden" th:name="serviceId" th:value="${service.id}"/>
+                <input type="hidden" th:name="priceListId" th:value="${priceList.id}"/>
                 <input type="submit" value="Добавить в карзину"/>
             </form>
         </td>

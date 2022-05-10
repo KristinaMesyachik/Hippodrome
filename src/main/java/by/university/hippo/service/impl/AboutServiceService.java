@@ -57,6 +57,13 @@ public class AboutServiceService implements IAboutServiceService {
     }
 
     @Override
+    public List<AboutServiceDTO> findByEnabledIs() {
+        return aboutServiceRepository.findByEnabledIs(1).stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void save(AboutService entity) {
         aboutServiceRepository.save(entity);
     }
@@ -67,6 +74,7 @@ public class AboutServiceService implements IAboutServiceService {
         aboutServiceDTO.setId(entity.getId());
         aboutServiceDTO.setTitle(entity.getTitle());
         aboutServiceDTO.setDescription(entity.getDescription());
+        aboutServiceDTO.setCategory(entity.getCategory());
         aboutServiceDTO.setCost(entity.getCost());
         if (entity.getEnabled() == 0) {
             aboutServiceDTO.setEnabled("Блокировано");
@@ -82,6 +90,7 @@ public class AboutServiceService implements IAboutServiceService {
         aboutService.setId(dto.getId());
         aboutService.setTitle(dto.getTitle());
         aboutService.setDescription(dto.getDescription());
+        aboutService.setCategory(dto.getCategory());
         aboutService.setCost(dto.getCost());
         if (Objects.equals(dto.getEnabled(), "Блокировано")) {
             aboutService.setEnabled(0);
@@ -93,11 +102,15 @@ public class AboutServiceService implements IAboutServiceService {
 
     @Override
     public List<AboutServiceDTO> mapListToDTO(List<AboutService> list) {
-        return null;
+        return list.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<AboutService> mapListToEntity(List<AboutServiceDTO> dto) {
-        return null;
+        return dto.stream()
+                .map(this::mapToEntity)
+                .collect(Collectors.toList());
     }
 }

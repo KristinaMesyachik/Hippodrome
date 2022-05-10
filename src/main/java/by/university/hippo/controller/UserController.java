@@ -1,9 +1,6 @@
 package by.university.hippo.controller;
 
-import by.university.hippo.DTO.InfoUserDTO;
-import by.university.hippo.DTO.ServiceDTO;
-import by.university.hippo.DTO.UserAddDTO;
-import by.university.hippo.DTO.UserDTO;
+import by.university.hippo.DTO.*;
 import by.university.hippo.service.impl.InfoUserService;
 import by.university.hippo.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +34,7 @@ public class UserController {
     @RequestMapping(value = {"/info"}, method = RequestMethod.GET)
     public String viewPeople(Model model, @RequestParam Long userId) {
         UserDTO user = userService.findByIdDTO(userId);
-        InfoUserDTO infoUserDTO = infoUserService.findByIdDTO(user.getInfoUserId());
+        InfoUserDTO infoUserDTO = user.getInfoUser();
         model.addAttribute("info", infoUserDTO);
         model.addAttribute("user", user);
         return "about-user";
@@ -58,7 +55,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/delete")
+    @RequestMapping(value = {"/delete"}, method = RequestMethod.GET)
     public String delete(@RequestParam(name = "userId") Long userId) {
         userService.delete(userId);
         return "redirect:/api/users/";
@@ -71,7 +68,6 @@ public class UserController {
         return "addUser";
     }
 
-//    @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
     public String save(@ModelAttribute(name = "user") UserAddDTO user) {
             userService.save(user);
@@ -80,27 +76,28 @@ public class UserController {
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/addFavorites"}, method = RequestMethod.GET)
-    public String addFavoriteService(@RequestParam(name = "serviceId") Long serviceId, HttpSession session) {
+    public String addFavoriteService(@RequestParam(name = "priceListId") Long priceListId, HttpSession session) {
         String username = (String) session.getAttribute("username");
-        int countFavorite = userService.addFavorites(serviceId, username);
+        int countFavorite = userService.addFavorites(priceListId, username);
         session.setAttribute("favorite", countFavorite);
-        return "redirect:/api/services/";
+        return "redirect:/api/priceLists/";
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/deleteFavorites"}, method = RequestMethod.GET)
-    public String delFavoriteService(@RequestParam(name = "serviceId") Long serviceId, HttpSession session) {
+    public String delFavoriteService(@RequestParam(name = "priceListId") Long priceListId, HttpSession session) {
         String username = (String) session.getAttribute("username");
-        int countFavorite = userService.delFavorites(serviceId, username);
+        int countFavorite = userService.delFavorites(priceListId, username);
         session.setAttribute("favorite", countFavorite);
-        return "redirect:/api/users/favorites";
+        return "redirect:/api/users/favorites/";
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/favorites"}, method = RequestMethod.GET)
     public String viewFavoriteService(Model model, HttpSession session) {
         String username = (String) session.getAttribute("username");
-        List<ServiceDTO> favorites = userService.viewFavorites(username);
+        List<PriceListDTO> favorites = userService.viewFavorites(username);
+        System.err.println(favorites);
         model.addAttribute("favorites", favorites);
         return "favorites";
     }

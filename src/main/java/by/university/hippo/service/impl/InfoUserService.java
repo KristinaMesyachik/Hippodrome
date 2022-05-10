@@ -57,7 +57,6 @@ public class InfoUserService implements IInfoUserService {
         infoUserDTO.setFirstname(entity.getFirstname());
         infoUserDTO.setMiddlename(entity.getMiddlename());
         infoUserDTO.setPhone(entity.getPhone());
-        infoUserDTO.setMail(entity.getMail());
         return infoUserDTO;
     }
 
@@ -69,7 +68,6 @@ public class InfoUserService implements IInfoUserService {
         infoUser.setFirstname(dto.getFirstname());
         infoUser.setMiddlename(dto.getMiddlename());
         infoUser.setPhone(dto.getPhone());
-        infoUser.setMail(dto.getMail());
         return infoUser;
     }
 

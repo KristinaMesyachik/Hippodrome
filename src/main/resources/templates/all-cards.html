@@ -21,14 +21,14 @@
         <tr>
             <th>id</th>
             <th>Номер</th>
-            <th>user id</th>
+<!--            <th>user id</th>-->
             <th>Активность</th>
 
         </tr>
         <tr th:each="card : ${cards}">
             <td th:utext="${card.id}">...</td>
             <td th:utext="${card.number}">...</td>
-            <td th:utext="${card.userId}">...</td>
+<!--            <td th:utext="${card.userId}">...</td>-->
             <td th:utext="${card.enabled}">...</td>
 
             <td>

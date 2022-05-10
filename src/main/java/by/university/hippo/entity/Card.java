@@ -21,10 +21,4 @@ public class Card implements Serializable {
 
     @Column(name = "number")
     private String number;
-
-    @Column(name = "user_id")
-    private long userId;
-
-    @Column(name = "enabled")
-    private int enabled;
 }

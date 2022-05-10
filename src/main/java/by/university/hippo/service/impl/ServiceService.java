@@ -4,18 +4,12 @@ import by.university.hippo.DTO.ServiceDTO;
 import by.university.hippo.entity.Service;
 import by.university.hippo.exception.NoSuchHippoException;
 import by.university.hippo.repository.IServiceRepository;
-import by.university.hippo.service.interfaces.IAboutServiceService;
-import by.university.hippo.service.interfaces.IHorseService;
-import by.university.hippo.service.interfaces.IServiceService;
-import by.university.hippo.service.interfaces.IStaffService;
+import by.university.hippo.service.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
@@ -31,7 +25,7 @@ public class ServiceService implements IServiceService {
     private IStaffService staffService;
 
     @Autowired
-    private IAboutServiceService aboutServiceService;
+    private IPriceListService priceListService;
 
     @Override
     public List<ServiceDTO> findAll() {
@@ -78,30 +72,43 @@ public class ServiceService implements IServiceService {
         save(mapToEntity(dto));
     }
 
+    @Transactional
+    public List<Service> save(HashMap<Integer, ServiceDTO> hashMap) {
+        List<ServiceDTO> services = new ArrayList<>(hashMap.values());
+        List<Service> serviceList = mapListToEntity(services);
+        boolean flag = false;
+        List<Service> wrongService = new ArrayList<>();
+        for (Service s : serviceList) {
+            s.setId(null);
+            Service byAllArgs = serviceRepository.findByTimeAndPlaceAndPriceList(s.getTime(), s.getPlace(), s.getPriceList());
+            if (byAllArgs != null) {
+                flag = true;
+                wrongService.add(byAllArgs);
+            }
+        }
+        if (!flag) {
+            for (Service s : serviceList) {
+                save(s);
+            }
+        }
+        return wrongService;
+    }
+
+    public List<ServiceDTO> findByArgsList(HashMap<Integer, ServiceDTO> hashMap) {
+        List<ServiceDTO> services = new ArrayList<>(hashMap.values());
+        List<Service> serviceList = mapListToEntity(services);
+        List<Service> serviceArrayList = new ArrayList<>();
+        for (Service s : serviceList) {
+            s.setId(null);
+            Service byAllArgs = serviceRepository.findByTimeAndPlaceAndPriceList(s.getTime(), s.getPlace(), s.getPriceList());
+            serviceArrayList.add(byAllArgs);
+        }
+        return mapListToDTO(serviceArrayList);
+    }
+
     @Override
     public void save(Service entity) {
         serviceRepository.save(entity);
-    }
-
-    @Override
-    public List<Long> addFromBasket(Long id, List<Long> basket) {
-        basket.add(id);
-        return basket;
-    }
-
-    @Override
-    public List<Long> deleteFromBasket(Long id, List<Long> basket) {
-        basket.remove(id);
-        return basket;
-    }
-
-    @Override
-    public List<ServiceDTO> viewBasket(List<Long> basket) {
-        List<ServiceDTO> services = new ArrayList<>();
-        for (Long i : basket) {
-            services.add(findByIdDTO(i));
-        }
-        return services;
     }
 
     @Override
@@ -109,7 +116,7 @@ public class ServiceService implements IServiceService {
         ServiceDTO serviceDTO = new ServiceDTO();
         serviceDTO.setId(entity.getId());
         serviceDTO.setPlace(entity.getPlace());
-        serviceDTO.setAboutService(aboutServiceService.findByIdDTO(entity.getAboutServiceId()));
+        serviceDTO.setPriceList(priceListService.mapToDTO(entity.getPriceList()));
         if (entity.getEnabled() == 0) {
             serviceDTO.setEnabled("Блокировано");
         } else {
@@ -117,8 +124,10 @@ public class ServiceService implements IServiceService {
         }
         serviceDTO.setTime(entity.getTime().toLocalTime().toString());
         serviceDTO.setDate(entity.getTime().toLocalDate().toString());
-        serviceDTO.setHorses(horseService.mapListToDTO(entity.getHorses()));
-        serviceDTO.setStaff(staffService.mapListToDTO(entity.getStaff()));
+        if (entity.getHorses() != null && entity.getStaff() != null) {
+            serviceDTO.setHorses(horseService.mapListToDTO(entity.getHorses()));
+            serviceDTO.setStaff(staffService.mapListToDTO(entity.getStaff()));
+        }
         return serviceDTO;
     }
 
@@ -146,10 +155,12 @@ public class ServiceService implements IServiceService {
         } else {
             service.setEnabled(1);
         }
-        service.setAboutServiceId(dto.getAboutService().getId());
-        service.setTime(LocalDateTime.parse(dto.getDate() + "T" + dto.getTime()));//TODO
-        service.setHorses(horseService.mapListToEntity(dto.getHorses()));
-        service.setStaff(staffService.mapListToEntity(dto.getStaff()));
+        service.setPriceList(priceListService.mapToEntity(dto.getPriceList()));
+        service.setTime(LocalDateTime.parse(dto.getDate() + "T" + dto.getTime()));
+        if (dto.getHorses() != null && dto.getStaff() != null) {
+            service.setHorses(horseService.mapListToEntity(dto.getHorses()));
+            service.setStaff(staffService.mapListToEntity(dto.getStaff()));
+        }
         return service;
     }
 }

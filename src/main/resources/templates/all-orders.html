@@ -21,6 +21,7 @@
             <th>Статус</th>
             <th>Время</th>
             <th>Сумма</th>
+
             <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
                 <th>Пользователь</th>
             </div>
@@ -42,21 +43,27 @@
             </div>
 
             <div th:if="${#authorization.expression('hasRole(''USER'')')}">
-                <td th:utext="${order.userId}">...</td>
                 <td>
+                    <!--                    <form th:action="@{/api/orders/print/}" method="get">-->
+                    <!--                        <input type="hidden" th:name="orderId" th:value="${order.id}"/>-->
+                    <!--                        <input type="submit" value="Подробнее"/>-->
+                    <!--                    </form>-->
                     <form th:action="@{/api/orders/print/}" method="get">
                         <input type="hidden" th:name="orderId" th:value="${order.id}"/>
                         <input type="submit" value="Печатать"/>
                     </form>
-                </td>
-                <td>
                     <form th:action="@{/api/orders/sendMail/}" method="get">
                         <input type="hidden" th:name="orderId" th:value="${order.id}"/>
                         <input type="submit" value="Отправить на почту"/>
                     </form>
                 </td>
             </div>
-
+            <td>
+                <form th:action="@{/api/orders/print/}" method="get">
+                    <input type="hidden" th:name="orderId" th:value="${order.id}"/>
+                    <input type="submit" value="Печатать"/>
+                </form>
+            </td>
         </tr>
     </table>
 </div>

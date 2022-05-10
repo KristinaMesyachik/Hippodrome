@@ -1,6 +1,6 @@
 package by.university.hippo.service.interfaces;
 
-import by.university.hippo.DTO.ServiceDTO;
+import by.university.hippo.DTO.PriceListDTO;
 import by.university.hippo.DTO.UserAddDTO;
 import by.university.hippo.DTO.UserDTO;
 import by.university.hippo.entity.User;
@@ -24,7 +24,7 @@ public interface IUserService extends IService<User, Long, UserDTO> {
 
     int delFavorites(Long serviceId, String username);
 
-    List<ServiceDTO> viewFavorites(String username);
+    List<PriceListDTO> viewFavorites(String username);
 
     void updateBlock(Long userId);
 }

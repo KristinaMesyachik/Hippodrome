@@ -41,6 +41,10 @@ public class User implements Serializable {
     @JoinColumn(name = "info_id")
     private InfoUser infoUser;
 
+    @OneToOne
+    @JoinColumn(name = "card_id")
+    private Card card;
+
     @OneToMany(mappedBy = "userId"
             , cascade = CascadeType.ALL)
     private List<Order> orders;
@@ -48,8 +52,8 @@ public class User implements Serializable {
     @ManyToMany(cascade = CascadeType.MERGE,
             fetch = FetchType.LAZY
     )
-    @JoinTable(name ="service_has_user",
+    @JoinTable(name ="price_list_has_user",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "service_id"))
-    private List<Service> favorites;
+            inverseJoinColumns = @JoinColumn(name = "price_list_id"))
+    private List<PriceList> favorites;
 }

@@ -1,14 +1,11 @@
 package by.university.hippo.controller;
 
-import by.university.hippo.DTO.InfoUserDTO;
+import by.university.hippo.DTO.PriceListDTO;
 import by.university.hippo.DTO.ServiceDTO;
-import by.university.hippo.DTO.UserDTO;
+import by.university.hippo.service.impl.PriceListService;
 import by.university.hippo.service.impl.ServiceService;
-import by.university.hippo.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,20 +13,27 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Controller
 @RequestMapping("/api/services")
+@SessionAttributes(types = ServiceDTO.class)
 public class ServiceController {
+
     @Autowired
     private ServiceService serviceService;
 
     @Autowired
-    private UserService userService;
+    private PriceListService priceListService;
 
-    public static List<Long> basket = new ArrayList<>();
+    public static HashMap<Integer, ServiceDTO> basket = new HashMap<>();
 
     public static BigDecimal discount = BigDecimal.valueOf(0.01);
+
+    public static List<String> timeList = List.of(
+            "10:00", "11:00", "12:00", "13:00", "14:00",
+            "15:00", "16:00", "17:00", "18:00", "19:00", "20:00");
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = {"/admin"}, method = RequestMethod.GET)
@@ -42,41 +46,8 @@ public class ServiceController {
     @RequestMapping(value = {"/"}, method = RequestMethod.GET)
     public String findAllUser(Model model) {
         List<ServiceDTO> services = serviceService.findByEnabledIs();
-        System.err.println(services);
         model.addAttribute("services", services);
         return "all-services";
-    }
-
-//    @PreAuthorize("hasRole('ROLE')")
-    @RequestMapping(value = {"/about"}, method = RequestMethod.GET)
-    public String viewAllService(Model model, @RequestParam Long serviceId) {
-        ServiceDTO serviceDTO = serviceService.findByIdDTO(serviceId);
-        model.addAttribute("service", serviceDTO);
-        return "about-user";
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
-    @RequestMapping(value = {"/after-registration"}, method = RequestMethod.GET)
-    public String afterRegistration(HttpSession session) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        UserDTO user = userService.findByLoginDTO(username);
-        double balanceDiscount = discount.multiply(BigDecimal.valueOf(user.getBalance())).doubleValue();
-        session.setAttribute("balanceDiscount", balanceDiscount);
-        session.setAttribute("username", username);
-        System.err.println(user);
-        System.err.println(userService.findByLogin(username));
-        session.setAttribute("basket", basket.size());
-        session.setAttribute("favorite", user.getFavorites().size());
-        return "redirect:/api/services/";
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
-    @RequestMapping(value = {"/before-logout"}, method = RequestMethod.GET)
-    public String beforeLogout(HttpSession session) {
-        session.invalidate();
-        basket.clear();
-        return "redirect:/api/services/";
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -109,26 +80,39 @@ public class ServiceController {
         return "redirect:/api/services/admin/";
     }
 
+//////////////////////////////////////////////////////
+
     @PreAuthorize("hasRole('ROLE_USER')")
-    @RequestMapping(value = {"/addBasket"}, method = RequestMethod.GET)
-    public String addBasket(@RequestParam(name = "serviceId") Long serviceId, HttpSession session) {
-        basket = serviceService.addFromBasket(serviceId, basket);
+    @RequestMapping(value = {"/beforeAddBasket"}, method = RequestMethod.GET)
+    public String beforeAddBasket(@RequestParam(name = "priceListId") Long priceListId, HttpSession session, Model model) {
+        PriceListDTO priceListDTO = priceListService.findByIdDTO(priceListId);
+        ServiceDTO serviceDTO = new ServiceDTO();
+        serviceDTO.setPriceList(priceListDTO);
+        model.addAttribute("service", serviceDTO);
+        session.setAttribute("timeList", timeList);
+        return "date_time";
+    }
+
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @RequestMapping(value = {"/addBasket"}, method = RequestMethod.POST)
+    public String addBasket(@ModelAttribute(name = "service") ServiceDTO service, HttpSession session) {
+        service.setId((long) service.hashCode());
+        basket.put(service.hashCode(), service);
         session.setAttribute("basket", basket.size());
-        return "redirect:/api/services/";
+        return "redirect:/api/priceLists/";
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/basket"}, method = RequestMethod.GET)
     public String basket(Model model) {
-        List<ServiceDTO> services = serviceService.viewBasket(basket);
-        model.addAttribute("services", services);
+        model.addAttribute("services", new ArrayList<>(basket.values()));
         return "basket";
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/deleteFromBasket"}, method = RequestMethod.GET)
-    public String deleteFromBasket(@RequestParam(name = "serviceId") Long serviceId, HttpSession session) {
-        basket = serviceService.deleteFromBasket(serviceId, basket);
+    public String deleteFromBasket(@RequestParam(name = "serviceId") Integer serviceId, HttpSession session) {
+        basket.remove(serviceId);
         session.setAttribute("basket", basket.size());
         return "redirect:/api/services/basket";
     }

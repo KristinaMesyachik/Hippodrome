@@ -1,6 +1,7 @@
 package by.university.hippo.service.interfaces;
 
 import by.university.hippo.DTO.OrderDTO;
+import by.university.hippo.DTO.ServiceDTO;
 import by.university.hippo.entity.Order;
 import by.university.hippo.service.IService;
 
@@ -15,5 +16,5 @@ public interface IOrderService extends IService<Order, Long, OrderDTO> {
 
     void save(OrderDTO entity);
 
-    void beforeSave(List<Long> basket, String username);
+    List<ServiceDTO> beforeSave(String username);
 }

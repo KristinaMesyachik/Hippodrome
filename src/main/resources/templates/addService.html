@@ -15,17 +15,10 @@
 <form th:action="@{/api/services/save}" th:object="${service}" method="POST">
     <input type="hidden" th:field="*{id}"/>
     <br/>
-    <p>Название :
-        <input type="text" th:field="*{aboutService.title}"/>
-        <br/>
 
-    <p>Описание :
-        <input type="text" th:field="*{aboutService.description}"/>
-        <br/>
-
-    <p>Цена :
-        <input type="text" th:field="*{aboutService.cost}"/>
-        <br/>
+<!--    <p>Цена :-->
+<!--        <input type="text" th:field="*{aboutService.cost}"/>-->
+<!--        <br/>-->
 
     <p>Место :
         <select name="place" th:field="*{aboutService.place}">
@@ -38,12 +31,13 @@
         <input type="date" th:field="*{date}"
                max="2022-06-30" min="2021-01-01">
 
-    <p>Выберите время:
-        <input type="time" th:field="*{time}"
-               max="19:00"
-               min="9:00"
-               step="600">
-        <input type="submit" value="Добавить"/>
+    <p><input type="time" list="time-list"></p>
+    <datalist id="time-list">
+        <option value="">Select task for disable</option>
+        <option th:each="timeList : ${timeList}"
+                th:value="${timeList}">
+        </option>
+    </datalist>
 
 </form>
 

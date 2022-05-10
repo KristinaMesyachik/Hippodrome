@@ -10,7 +10,4 @@ import lombok.NoArgsConstructor;
 public class CardDTO {
     private Long id;
     private String number;
-    private double balance;
-    private long userId;
-    private String enabled;
 }

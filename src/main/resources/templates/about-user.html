@@ -42,8 +42,6 @@
             <th>Фамилия</th>
             <th>Отчество</th>
             <th>Телефон</th>
-            <th>Почта</th>
-
         </tr>
         <tbody>
         <tr th:with="info = ${info}">
@@ -52,7 +50,6 @@
             <td th:utext="${info.firstname}">...</td>
             <td th:utext="${info.middlename}">...</td>
             <td th:utext="${info.phone}">...</td>
-            <td th:utext="${info.mail}">...</td>
         </tr>
         <tbody>
     </table>

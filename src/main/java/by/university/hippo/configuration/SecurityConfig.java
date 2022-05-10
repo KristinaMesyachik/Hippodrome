@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
                 .and()
                 .formLogin()
-                .defaultSuccessUrl("/api/services/after-registration/", true)
+                .defaultSuccessUrl("/api/priceLists/after-registration/", true)
         ;
     }
 

@@ -19,11 +19,11 @@
         <input type="submit" value="Админ-версия"/>
     </form>
 
-    <form th:action="@{/api/services/}" method="get">
+    <form th:action="@{/api/priceLists/}" method="get">
         <input type="submit" value="Пользовательская-версия"/>
     </form>
 
-    <form th:action="@{/api/services/addService}" method="get">
+    <form th:action="@{/api/priceLists/addPriceList}" method="get">
         <input type="submit" value="Добавить услугу"/>
     </form>
 </div>
@@ -38,47 +38,48 @@
             <th>Название</th>
             <th>Описание</th>
             <th>Стоимость</th>
-            <th>Место</th>
-            <th>Дата</th>
-            <th>Время</th>
+            <th>Категория</th>
+            <th>Количество человек</th>
+            <th>Продолжительность</th>
+            <th>Суммарная стоимость</th>
         </tr>
-        <tr th:each="service : ${services}">
+        <tr th:each="priceList : ${priceList}">
             <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-                <td th:utext="${service.id}">...</td>
-                <td th:utext="${service.enabled}">...</td>
+                <td th:utext="${priceList.id}">...</td>
+                <td th:utext="${priceList.enabled}">...</td>
             </div>
-            <td th:utext="${service.aboutService.title}">...</td>
-            <td th:utext="${service.aboutService.description}">...</td>
-            <td th:utext="${service.aboutService.cost}">...</td>
-            <td th:utext="${service.place.value}">...</td>
-            <td th:utext="${service.date}">...</td>
-            <td th:utext="${service.time}">...</td>
+            <td th:utext="${priceList.aboutService.title}">...</td>
+            <td th:utext="${priceList.aboutService.description}">...</td>
+            <td th:utext="${priceList.aboutService.cost}">...</td>
+            <td th:utext="${priceList.aboutService.category.value}">...</td>
+            <td th:utext="${priceList.countOfPeople}">...</td>
+            <td th:utext="${priceList.duration}">...</td>
+            <td th:utext="${priceList.amount}">...</td>
             <div sec:authorize="isAuthenticated()">
                 <td>
-
-                    <form th:action="@{/api/services/about/}" method="get">
-                        <input type="hidden" th:name="serviceId" th:value="${service.id}">
-                        <input type="submit" value="Подробнее"/>
-                    </form>
+<!--                    <form th:action="@{/api/services/about/}" method="get">-->
+<!--                        <input type="hidden" th:name="priceListId" th:value="${priceList.id}">-->
+<!--                        <input type="submit" value="Подробнее"/>-->
+<!--                    </form>-->
 
                     <div th:if="${#authorization.expression('hasRole(''USER'')')}">
-                        <form th:action="@{/api/services/addBasket/}" method="get">
-                            <input type="hidden" th:name="serviceId" th:value="${service.id}"/>
+                        <form th:action="@{/api/services/beforeAddBasket/}" method="get">
+                            <input type="hidden" th:name="priceListId" th:value="${priceList.id}"/>
                             <input type="submit" value="Добавить в карзину"/>
                         </form>
                         <form th:action="@{/api/users/addFavorites/}" method="get">
-                            <input type="hidden" th:name="serviceId" th:value="${service.id}"/>
+                            <input type="hidden" th:name="priceListId" th:value="${priceList.id}"/>
                             <input type="submit" value="Избрать"/>
                         </form>
                     </div>
 
                     <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-                        <form th:action="@{/api/services/update/}" method="get">
-                            <input type="hidden" th:name="serviceId" th:value="${service.id}">
+                        <form th:action="@{/api/priceLists/update/}" method="get">
+                            <input type="hidden" th:name="priceListId" th:value="${priceList.id}">
                             <input type="submit" value="Изменить"/>
                         </form>
-                        <form th:action="@{/api/services/delete/}" method="get">
-                            <input type="hidden" th:name="serviceId" th:value="${service.id}"/>
+                        <form th:action="@{/api/priceLists/delete/}" method="get">
+                            <input type="hidden" th:name="priceListId" th:value="${priceList.id}"/>
                             <input type="submit" value="Блокировать"/>
                         </form>
                     </div>

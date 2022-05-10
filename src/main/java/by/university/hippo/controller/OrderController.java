@@ -1,6 +1,7 @@
 package by.university.hippo.controller;
 
 import by.university.hippo.DTO.OrderDTO;
+import by.university.hippo.DTO.ServiceDTO;
 import by.university.hippo.DTO.UserDTO;
 import by.university.hippo.service.impl.OrderService;
 import by.university.hippo.service.impl.UserService;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static by.university.hippo.controller.ServiceController.basket;
 import static by.university.hippo.controller.ServiceController.discount;
 
 
@@ -48,28 +50,34 @@ public class OrderController {
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/addOrder"}, method = RequestMethod.GET)
-    public String addOrderPage(HttpSession session) {
+    public String addOrderPage(HttpSession session, Model model) {
         String username = (String) session.getAttribute("username");
         UserDTO user = userService.findByLoginDTO(username);
-        orderService.beforeSave(ServiceController.basket, username);
-        session.setAttribute("basket", ServiceController.basket.size());
-        double balanceDiscount = discount.multiply(BigDecimal.valueOf(user.getBalance())).doubleValue();
-        session.setAttribute("balanceDiscount", balanceDiscount);
-        return "redirect:/api/orders/updateDiscount";
+        List<ServiceDTO> serviceList = orderService.beforeSave(username);
+        if (serviceList == null) {
+            session.setAttribute("basket", basket.size());
+            double balanceDiscount = discount.multiply(BigDecimal.valueOf(user.getBalance())).doubleValue();
+            session.setAttribute("balanceDiscount", balanceDiscount);
+            return "redirect:/api/orders/updateDiscount";
+        } else {
+            model.addAttribute("services", serviceList);
+            return "services-busy";
+        }
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @RequestMapping(value = {"/print"}, method = RequestMethod.GET)
-    public String printOrder(HttpSession session) {//TODO
-        return "redirect:/api/orders";
-    }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @RequestMapping(value = {"/sendMail"}, method = RequestMethod.GET)
-    public String sendMailOrder(HttpSession session) {//TODO
-        return "redirect:/api/orders";
-    }
-
+    //    @PreAuthorize("hasRole('ROLE_USER')")
+//    @RequestMapping(value = {"/print"}, method = RequestMethod.GET)
+//    public String printOrder(HttpSession session) {//TODO
+//        return "redirect:/api/orders";
+//    }
+//
+//    @PreAuthorize("hasRole('ROLE_USER')")
+//    @RequestMapping(value = {"/sendMail"}, method = RequestMethod.GET)
+//    public String sendMailOrder(HttpSession session) {//TODO
+//        return "redirect:/api/orders";
+//    }
+//
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/updateDiscount"}, method = RequestMethod.GET)
     public String updateDiscount(HttpSession session) {

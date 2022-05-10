@@ -10,7 +10,7 @@
 
 <br><br><br>
 <table border="1" width="100%">
-    <caption>Моя корзина</caption>
+    <caption>Данная услуга уже заказана другим пользователем</caption>
     <tr>
         <th></th>
         <th>Название</th>
@@ -38,20 +38,9 @@
         <td>
             <form th:action="@{/api/services/deleteFromBasket}" method="get">
                 <input type="hidden" th:name="serviceId" th:value="${service.id}"/>
-                <input type="submit" value="Удалить"/>
+                <input type="submit" value="Удалить из корзины"/>
             </form>
-            <form th:action="@{/api/orders/addOrder}" method="get">
-<!--                <input type="hidden" th:name="serviceId" th:value="${service.id}"/>-->
-                <input type="submit" value="Заказать"/>
-            </form>
-        </td>
     </tr>
 </table>
-</div>
-    <div th:if="${session.basket}">
-        <form th:action="@{/api/orders/addOrder}" method="get">
-            <input type="submit" value="Сформировать заказ"/>
-        </form>
-    </div>
 </body>
 </html>

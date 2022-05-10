@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить услугу</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<th:block th:include="/_title"></th:block>
+
+<br><br>
+
+<h1>Добавление услуги:</h1>
+
+<form th:action="@{/api/priceLists/save}" th:object="${priceList}" method="POST">
+    <input type="hidden" th:field="*{id}"/>
+    <br/>
+
+    <p>Название :
+        <input type="text" th:field="*{aboutService}"/>
+        <datalist id="time-list">
+            <option value="">Select task for disable</option>
+            <option th:each="timeList : ${timeList}"
+                    th:value="${timeList}">
+            </option>
+        </datalist>
+
+    <p>Количество человек :
+        <input type="text" th:field="*{countOfPeople}"/>
+        <br/>
+
+    <p>Длительность :
+        <input type="text" th:field="*{duration}"/>
+        <br/>
+</form>
+
+<br/>
+</body>
+</html>

@@ -16,5 +16,4 @@ public class UserAddDTO {
     private String firstname;
     private String middlename;
     private String phone;
-    private String mail;
 }

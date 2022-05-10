@@ -22,9 +22,6 @@ public class Service implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "about_service_id")
-    private Long aboutServiceId;
-
     @Column(name = "time")
     private LocalDateTime time;
 
@@ -32,18 +29,22 @@ public class Service implements Serializable {
     @Column(name = "place")
     private Place place;
 
+    @ManyToOne
+    @JoinColumn(name = "price_list_id")
+    private PriceList priceList;
+
     @ManyToMany(cascade = CascadeType.MERGE,
             fetch = FetchType.LAZY
     )
-    @JoinTable(name ="horse_has_service",
-    joinColumns = @JoinColumn(name = "service_id"),
-    inverseJoinColumns = @JoinColumn(name = "horse_id"))
+    @JoinTable(name = "horse_has_service",
+            joinColumns = @JoinColumn(name = "service_id"),
+            inverseJoinColumns = @JoinColumn(name = "horse_id"))
     private List<Horse> horses;
 
     @ManyToMany(cascade = CascadeType.MERGE,
             fetch = FetchType.LAZY
     )
-    @JoinTable(name ="staff_has_service",
+    @JoinTable(name = "staff_has_service",
             joinColumns = @JoinColumn(name = "service_id"),
             inverseJoinColumns = @JoinColumn(name = "staff_id"))
     private List<Staff> staff;

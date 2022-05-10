@@ -1,6 +1,5 @@
 package by.university.hippo.DTO;
 
-import by.university.hippo.entity.enums.Category;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,11 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AboutServiceDTO {
+public class PriceListDTO {
     private Long id;
-    private String title;
-    private String description;
-    private double cost;
-    private Category category;
+    private int countOfPeople;
+    private double amount;
+    private int duration;
     private String enabled;
+    private AboutServiceDTO aboutService;
 }
