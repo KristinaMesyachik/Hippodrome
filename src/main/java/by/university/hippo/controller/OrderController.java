@@ -3,9 +3,11 @@ package by.university.hippo.controller;
 import by.university.hippo.DTO.OrderDTO;
 import by.university.hippo.DTO.ServiceDTO;
 import by.university.hippo.DTO.UserDTO;
+import by.university.hippo.mail.DefaultEmailService;
 import by.university.hippo.service.impl.OrderService;
 import by.university.hippo.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +32,12 @@ public class OrderController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    public JavaMailSender emailSender;
+
+    @Autowired
+    private DefaultEmailService defaultEmailService;
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/"}, method = RequestMethod.GET)
@@ -72,12 +80,16 @@ public class OrderController {
 //        return "redirect:/api/orders";
 //    }
 //
-//    @PreAuthorize("hasRole('ROLE_USER')")
-//    @RequestMapping(value = {"/sendMail"}, method = RequestMethod.GET)
-//    public String sendMailOrder(HttpSession session) {//TODO
-//        return "redirect:/api/orders";
-//    }
-//
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @RequestMapping(value = {"/sendMail"}, method = RequestMethod.GET)
+    public String sendMailOrder(HttpSession session) {//TODO
+        defaultEmailService.sendSimpleEmail(
+                String.valueOf(session.getAttribute("username"))
+                , "Title"
+                , "You are win!");
+        return "redirect:/api/orders/";
+    }
+
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = {"/updateDiscount"}, method = RequestMethod.GET)
     public String updateDiscount(HttpSession session) {
